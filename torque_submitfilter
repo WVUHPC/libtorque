@@ -1,0 +1,215 @@
+#!/usr/bin/python
+
+# Author: Nathan Gregg
+#         West Virginia University
+# Date: 2014.12.30
+#
+# Description: Checks the amount of memory being used for community nodes and 
+# processes request to see if should be accepted or rejected.
+#
+# Updates: 
+# 2015.02.09: No longer allow vmem setting to be used on specified queues
+
+
+import fileinput
+import sys
+import re
+import os.path
+import time
+
+
+inputList = [] #Takes pbs submission and store it into List
+dictValues = {} #Arguments and their values in submission stored in dictionary
+
+# Scans input for arguments
+def checkArgs():
+	if len(sys.argv) > 2 or "-I" in sys.argv:
+		return True
+
+# Check for interactive jobs
+def checkInteractive():
+	if "-I" in sys.argv:
+		return True
+
+# Verify qsub script file exists and is readable
+def verifyQsubFile():
+	#print >> sys.stderr,sys.argv
+	if len(sys.argv) > 1:
+		#print >> sys.stderr,sys.argv
+		fileLocation = sys.argv[-1]
+		if not os.path.isfile(fileLocation):
+			print >> sys.stderr,"\n\tERROR: The specified submit script is not a readable file."
+			print >> sys.stderr,"\tNote: When using arguments with qsub and using a submit script"
+			print >> sys.stderr,"\tyou must specify the file location as the last argument."
+			print >> sys.stderr,"\tExample: 'qsub -l pvmem=3gb submit_script.sh\n"
+			sys.exit(-1)
+
+# Processes arguments
+def processArgs():
+
+	#Check for queue
+	argumentList = sys.argv[:]
+
+	if "-q" in argumentList:
+		location = argumentList.index('-q')
+		queue = argumentList[location + 1]
+		queue = "#PBS -q " + queue 
+		inputList.append(queue)
+
+	while "-l" in argumentList:
+	#if "-l" in argumentList:
+		location = argumentList.index('-l')
+		resource = argumentList[location + 1]
+		resource = "#PBS -l " + resource 
+		inputList.append(resource)
+		argumentList.pop(location + 1)
+		argumentList.pop(location)
+
+# Scans PBS Inputfile and reads into list
+def readStandardInput():
+	if len(sys.argv) > 1:
+		fileLocation = sys.argv[-1]
+		for line in fileinput.input(fileLocation):
+			inputList.append(line)
+	# Input from standard in
+	if len(sys.argv) == 1:
+		for line in sys.stdin:
+			inputList.append(line)
+
+# Scans inputList for submit queue
+def findQueue():
+	for word in inputList:
+		if word.startswith('#PBS') and "-q" in word:
+			queue = word.split("-q")
+			queue = queue[1]
+			queue = queue.strip(" \n")
+			dictValues['queue'] = queue
+
+# Scans inputList for a particular value of resouce (ie ppn)
+def searchValue(resourceInput):
+	for word in inputList:
+		if word.startswith('#PBS -l'):
+			#Search for resource value
+			regex = r"\b" + resourceInput + r"\b"
+			regTest = re.search(regex, word)
+			if regTest:
+				resource = word.split(resourceInput)
+				resource = resource[1]
+				if ":" in resource or "," in resource:
+					resource = resource.replace(":",",").split(",")
+					#Value of resource after removing other passed resources
+					resource = resource[0]
+					return resource.strip("= \n")
+				else:
+					return resource.strip("= \n")
+   
+# Scans inputList for all passed values (calls searchValue())
+def findAllValues(pbsResources):
+	for i in pbsResources:
+		returnedValue = searchValue(i)
+		dictValues[i] = returnedValue
+
+# Scan inputList for any command that could cause issues
+def checkCommands(commandsToCheck):
+	for word in inputList:
+		if not word.lstrip().startswith('#'):
+			for command in commandsToCheck:
+				if command in word:
+					print >> sys.stderr,"\n\tERROR: Command '" + command + "' is not permitted to be executed on compute nodes."
+					print >> sys.stderr,"\tPlease remove the use of '" + command + "' from your submit script."
+					print >> sys.stderr,"\tIf you feel this is in error, please open a help desk ticket at"
+					print >> sys.stderr,"\thttps://helpdesk.hpc.wvu.edu.\n"
+					sys.exit(-1)
+
+# Checks queue to see if it is one we want to check against
+def validateQueue(queuesToCheck):
+	findQueue()
+	if 'queue' in dictValues:
+		queue = dictValues['queue']
+		if queue in queuesToCheck:
+			return True
+
+# Outputs user file to pbs for processing
+def processInput():
+	for line in inputList:
+		print line
+
+# Checks to make sure enougn memory is available on the node
+def checkMemory():
+	maxMemory = 54
+
+	if dictValues['vmem'] or dictValues['mem']:
+		print >> sys.stderr,"\n\tERROR: This system uses 'pvmem' resource setting by default."
+		print >> sys.stderr,"\tUsing 'vmem' and/or 'mem' resouce on this queue is not permitted."
+		print >> sys.stderr,"\tSetting 'vmem' or 'mem' will not change the default 'pvmem' "
+		print >> sys.stderr,"\tmemory setting of 3 GB, which is the amount of memory per process.\n"  
+		print >> sys.stderr,"\tPlease visit http://goo.gl/vF3UgX for more information.\n"
+		sys.exit(-1)
+
+	if not dictValues['pvmem']:
+		processInput()
+		return
+
+	pvmem=dictValues['pvmem'].lower()
+	pvmemOrig = pvmem.strip()
+	nodes=dictValues['nodes']
+	ppn=dictValues['ppn']
+
+	if pvmem.endswith("gb") or pvmem.endswith("gw"):
+		pvmem=pvmem.strip("gb gw")
+	
+	elif pvmem.endswith("mb") or pvmem.endswith("mw"):
+		pvmem=pvmem.strip("mb mw")
+		pvmem=float(pvmem)/1024
+
+	elif pvmem.endswith("kb") or pvmem.endswith("kw"):
+		pvmem=pvmem.strip("kb kw")
+		pvmem=float(pvmem)/1024/1024
+
+	elif pvmem.endswith("b") or pvmem.endswith("w"):
+		pvmem=pvmem.strip("b w")
+		pvmem=float(pvmem)/1024/1024/1024
+
+	totalMem = (float(pvmem)*float(ppn))
+	availMem = maxMemory / float(pvmem)
+	if (totalMem > maxMemory):
+		print >> sys.stderr,"\n\tERROR: You are requesting a total of " + str(totalMem) + " GB of memory per node."
+		print >> sys.stderr,"\tMax memory per node is 54 GB in the " + dictValues['queue'] +  " queue. \n"
+		print >> sys.stderr,"\tBased on your current pvmem value of " + pvmemOrig + ", the max number for ppn can be " + str(int(availMem)) + "."
+		print >> sys.stderr,"\tPlease visit http://goo.gl/vF3UgX for more information.\n"
+		sys.exit(-1)
+	else:
+		processInput()
+
+######### Main Function Calls
+
+#Check to see if any arguments passed to qsub
+#if checkArgs():
+#	processArgs()
+processArgs()
+
+#print >> sys.stderr,sys.argv
+#If using a submission script (ie not interactive) continue checking
+#if not interactive:
+if not checkInteractive():
+	
+	verifyQsubFile()
+	readStandardInput()
+
+	#Check for invalid commands
+	commandsToCheck = ["qsub", "msub", "ssh", "scp"]
+	checkCommands(commandsToCheck)
+
+	#If queue is listed in "queuesToCheck" then continue to process submit filter
+	queuesToCheck = ["comm_mmem_week", "comm_mmem_day"]
+	if validateQueue(queuesToCheck) is True:
+
+		pbsResources = ["pvmem", "ppn", "nodes", "vmem", "mem"]
+		findAllValues(pbsResources)
+	
+		checkMemory()
+	else:
+		processInput()
+
+else:
+	sys.exit(0)

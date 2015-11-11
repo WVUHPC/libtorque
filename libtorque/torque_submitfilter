@@ -1,21 +1,8 @@
-#!/usr/bin/python
+#!/bin/env python
+# torque_submitfilter
+# Verifies system correctness for PBS submission scripts
 
-# Author: Nathan Gregg
-#         West Virginia University
-# Date: 2014.12.30
-#
-# Description: Checks the amount of memory being used for community nodes and 
-# processes request to see if should be accepted or rejected.
-#
-# Updates: 
-# 2015.02.09: No longer allow vmem setting to be used on specified queues
-
-
-import fileinput
-import sys
-import re
-import os.path
-import time
+import fileinput, sys, re, os.path, time
 
 
 inputList = [] #Takes pbs submission and store it into List

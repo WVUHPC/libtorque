@@ -20,16 +20,16 @@ class TestQsubfileMethods (unittest.TestCase):
         self.assertEqual (self.current.parse_comm (command), ['qsub -N file']) 
 
     def test_parseOpts (self):
-        args = [ ]
-        args.append ("-l")
-        args.append ("nodes=1:ppn=3,pvmen=5GB")
-        args.append ("-q")
-        args.append ("standby")
-        args.append ("-l")
-        args.append ("ppn=5")
+        args = "-l nodes=1:ppn=3,pvmem=5GB -q standby -l ppn=5".split ()
         self.current.parseOpts (args)
         self.assertEqual (self.current.attr ['ppn'], "5")
         self.assertEqual (self.current.attr ['queue'], "standby")
+
+    def test_parseOpts_return (self):
+        args = "-l nodes=1:ppn=3 filename".split ()
+        leftover = self.current.parseOpts (args)
+        self.assertEqual (len (leftover), 1)
+        self.assertEqual (leftover [0], 'filename')
 
     def test_processfile (self):
         qsubfile = "#!/bin/sh\n#PBS -l nodes=1:ppn=3,pvmem=5GB\n" +  \

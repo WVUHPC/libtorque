@@ -34,7 +34,9 @@ class qsubfile (PBSattr):
         # Map datatype to store locally (allowing for duplication)
         tmp_attr = { }
 
-        opts, args = getopt.gnu_getopt (options, "q:l:I")
+        qsub_opts = "zXxVIhfna:A:b:c:C:d:D:e:j:k:l:m:M:N:o:p:P:q:r:S:t:T:u:v:w:W:"
+
+        opts, args = getopt.gnu_getopt (options, qsub_opts)
             
         for o, a in opts:
             if o in ("-q"):
@@ -56,28 +58,39 @@ class qsubfile (PBSattr):
         # Now send mapping structure to PBS attr to add to global file class
         PBSattr.add_attr (self, tmp_attr)
 
+        return args
+
 
     def processfile (self, fn):
         """Scan qsub file (or STDIN) identifing PBS directives or commands and
         process according."""
 
-        input = open (fn, 'r')
+
+        if ('STDIN' == fn):
+            input = sys.stdin
+        else:
+            input = open (fn, 'r')
+
         args = [ ]
-        incommands = False
+        parse_directives = True
 
         for line in input:
+            # Skip empty lines
+            if (re.match (r'^$', line)):
+                continue;
+
             line = line.strip('\n')
             if (line.startswith ('#')):
                 if (line.startswith ('#PBS ')):
-                    if (not incommands):
+                    if (parse_directives):
                         for directive in line.strip ('#PBS ').split (' '):
                             args.append (directive)
                     else:
-                        sys.stderr.write ("%s not processed" 
+                        sys.stderr.write ("%s not processed\n" 
                                 % line.strip ('#PBS'))
             else:
-                if (not incommands):
-                    incommands = True
+                if (parse_directives):
+                    parse_directives = False
                 for each in self.parse_comm (line):
                     PBSattr.add_command (self, each)
 

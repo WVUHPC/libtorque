@@ -1,0 +1,15 @@
+#!/bin/sh
+
+#PBS -N name
+#PBS -q standby
+#PBS -l nodes=4:ppn=16:large,pvmem=3GB
+
+echo "this is the first command"
+
+modules load mpi/intel compilers/gcc
+
+mpirun -np 16 $PBS_NODEFILE cmd1
+ssh sric0048.hpc.wvu.edu
+qsub file1
+
+module load genomics/abyss

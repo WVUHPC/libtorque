@@ -27,7 +27,12 @@ class qsubfile (PBSattr):
         # Return all Commands
         return processed_commands
 
-    def parseOpts (self, options):
+    def commline (self, args):
+        "Wrapper for parseOpts for CLI options"
+
+        self.parseOpts (args, overWrite=True)
+
+    def parseOpts (self, options, overWrite=False):
         """Parse options list, sending each value to the correct PBSattr
         method"""
 
@@ -56,7 +61,7 @@ class qsubfile (PBSattr):
                 continue
 
         # Now send mapping structure to PBS attr to add to global file class
-        PBSattr.add_attr (self, tmp_attr)
+        PBSattr.add_attr (self, tmp_attr, overWrite)
 
         return args
 

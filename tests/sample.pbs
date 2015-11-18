@@ -6,10 +6,13 @@
 
 echo "this is the first command"
 
-modules load mpi/intel compilers/gcc
+module load mpi/intel compilers/gcc compilers/python
+module load compilers/R genomics/abyss
 
 mpirun -np 16 $PBS_NODEFILE cmd1
-ssh sric0048.hpc.wvu.edu
-qsub file1
+#ssh sric0048.hpc.wvu.edu
+#qsub file1
+
+#<file1 ssh sric0048.hpc.wvu.edu
 
 module load genomics/abyss

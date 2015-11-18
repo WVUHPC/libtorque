@@ -13,16 +13,18 @@ class PBSattr:
         "Check if attr is already defined"
 
         if (attr in self.attr):
-            sys.stderr.write ("PBS directive duplication: %s \n" % attr)
             return False
         else:
             return True
 
-    def add_attr (self, attr_map):
+    def add_attr (self, attr_map, overWrite=False):
         """Add PBS attribute and value to global attributes"""
 
         for key in iter (attr_map):
-            if (self.__chk_duplicate (key)):
+            if (not overWrite):
+                if (self.__chk_duplicate (key)):
+                    self.attr [key] = attr_map [key]
+            else:
                 self.attr [key] = attr_map [key]
 
 

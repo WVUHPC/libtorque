@@ -31,6 +31,15 @@ class TestpbsattrMethods (unittest.TestCase):
         self.current.add_attr (second_attr)
         self.assertEqual (self.current.attr['queue'], "standby")
 
+    def test_overwrite (self):
+        map_attr = { }
+        second_attr = { }
+        map_attr ['queue'] = "standby"
+        second_attr ['queue'] = "comm_mmem_week"
+        self.current.add_attr (map_attr)
+        self.current.add_attr (second_attr, overWrite=True)
+        self.assertEqual (self.current.attr['queue'], "comm_mmem_week")
+
     def test_add_multiple_attr (self):
         map_attr = { }
         map_attr ['queue'] = "standby"

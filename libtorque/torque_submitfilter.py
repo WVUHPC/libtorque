@@ -2,7 +2,7 @@
 # torque_submitfilter
 # Spruce Head Node srih0001
 
-import sys
+import sys, tempfile
 
 import pbsattr
 from qsubfile import qsubfile 
@@ -98,6 +98,24 @@ def chk_commands (commands):
             sys.stderr.write ("\thttps://helpdesk.hpc.wvu.edu.\n\n")
             sys.exit(-1)
 
+def capture_modload (commands):
+
+    # Open a temporary file to write to with a unique name
+    tmpfile = tempfile.NamedTemporaryFile (dir = "./tmpJvyZn4", mode = 'w', \
+                                        delete = False)
+
+    # Write modulefiles loaded to tmpfile
+    for cmd in commands:
+        if 'module' in cmd [0]:
+            if 'load' in cmd[1]:
+                for module in cmd [2:]:
+                    tmpfile.write (module)
+                    tmpfile.write ("\n")
+
+    tmpfile.close ()
+
+
+
 def main ():
     """Interface CLI options and Qsubfile options given by qsub command"""
 
@@ -115,6 +133,10 @@ def main ():
         chk_memory (curr_job.attr)
         chk_commands (curr_job.comm)
 
+        # If runnable - capture module command loads
+        capture_modload (curr_job.comm)
+    
+    
     sys.exit(0)
     
 

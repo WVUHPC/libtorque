@@ -66,40 +66,49 @@ class qsubfile (PBSattr):
         return args
 
 
-    def processfile (self, fn):
+    def processfile ( self, fn, printfile = True, outfile = False ):
         """Scan qsub file (or STDIN) identifing PBS directives or commands and
         process according."""
 
 
-        if ('STDIN' == fn):
+        if ( 'STDIN' == fn ):
             input = sys.stdin
         else:
-            input = open (fn, 'r')
+            input = open ( fn, 'r' )
 
         args = [ ]
         parse_directives = True
 
+        # Setup outfile if any
+        if ( outfile ):
+            output = open ( outfile, 'w' )
+        else:
+            output = sys.stdout
+
         for line in input:
+            # Make sure submit script echoed to STDOUT for qsub command
+            if ( printfile ):
+                output.write ( line )
             # Skip empty lines
-            if (re.match (r'^$', line)):
+            if ( re.match ( r'^$', line ) ):
                 continue;
 
-            line = line.strip('\n')
-            if (line.startswith ('#')):
-                if (line.startswith ('#PBS ')):
-                    if (parse_directives):
-                        for directive in line.lstrip ('#PBS ').split (' '):
-                            args.append (directive)
-                    else:
-                        sys.stderr.write ("%s not processed\n" 
-                                % line.strip ('#PBS'))
+            line = line.strip ( '\n' )
+            if ( line.startswith ( '#' ) ):
+                if ( line.startswith ( '#PBS ' ) ):
+                    if ( parse_directives ):
+                        for directive in line.lstrip ( '#PBS ' ).split ( ' ' ):
+                            args.append ( directive )
             else:
-                if (parse_directives):
+                if ( parse_directives ):
                     parse_directives = False
-                for each in self.parse_comm (line):
-                    PBSattr.add_command (self, each)
+                for each in self.parse_comm ( line ):
+                    PBSattr.add_command ( self, each )
 
         # Parse Options in correct order
-        self.parseOpts (args)
+        self.parseOpts ( args )
 
+        if ( outfile ):
+            output.close ()
+        input.close ()
                

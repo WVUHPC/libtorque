@@ -4,6 +4,8 @@
 
 import os.path, sys
 import tempfile
+import subprocess
+
 import unittest
 
 sys.path.append (os.path.realpath ("../libtorque"))
@@ -45,19 +47,45 @@ class TestQsubfileMethods (unittest.TestCase):
         self.assertEqual (len (leftover), 1)
         self.assertEqual (leftover [0], 'filename')
 
-    def test_processfile (self):
+    def test_processfile ( self ):
         qsubfile = "#!/bin/sh\n#PBS -l nodes=1:ppn=3,pvmem=5GB\n" +  \
             "#PBS -q standby\nmodule load mpi/openmpi/1.6.5\n" +  \
             "echo Hello"
-        tmpfile = tempfile.NamedTemporaryFile (mode='w', delete=False)
-        tmpfile.write (qsubfile)
+
+        # Create sample submission script
+        tmpfile = tempfile.NamedTemporaryFile ( mode = 'w', delete = False )
+        tmpfile.write ( qsubfile )
         filename = tmpfile.name
         tmpfile.close ()
-        self.current.processfile (filename)
-        self.assertEqual (self.current.attr ['queue'], "standby")
-        self.assertEqual (self.current.attr ['nodes'], "1")
-        self.assertTrue ("module" in self.current.comm[0:][0])
-        os.unlink (filename)
+
+        self.current.processfile ( filename, printfile = False )
+        self.assertEqual ( self.current.attr ['queue'], "standby" )
+        self.assertEqual ( self.current.attr ['nodes'], "1" )
+        self.assertTrue ( "module" in self.current.comm [0:][0] )
+        os.unlink ( filename )
+        
+    def test_identical_output ( self ):
+        qsubfile = "#!/bin/sh\n#PBS -l nodes=1:ppn=3,pvmem=5GB\n" +  \
+            "#PBS -q standby\nmodule load mpi/openmpi/1.6.5\n" +  \
+            "echo Hello"
+
+        # Create sample submission script ; and capture output
+        tmpfile = tempfile.NamedTemporaryFile ( mode = 'w', delete = False )
+        tmpfile.write ( qsubfile )
+        filename = tmpfile.name
+        tmpfile.close ()
+        
+        expect_tmp = tempfile.NamedTemporaryFile ( mode = 'w', delete = False )
+        tmpoutfile = expect_tmp.name
+        expect_tmp.close ()
+
+        # Submit file into processfile () - writing STDOUT to tmpoutfile
+        self.current.processfile ( filename, outfile = tmpoutfile )
+        shellcmd = ['cmp', filename, tmpoutfile]
+        self.assertEqual ( subprocess.call ( shellcmd ), 0 )
+      
+        os.unlink ( filename )
+        os.unlink ( tmpoutfile )
         
 
 if __name__ == '__main__':

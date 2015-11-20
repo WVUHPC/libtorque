@@ -49,12 +49,22 @@ class qsubfile (PBSattr):
             elif o in ("-l"):
                 # Parse resource into mapping attribute
                 for type in a.split (','):
-                    for each in type.split (':'):
-                        if ('=' in each):
-                            keyword, value = each.split ('=')
+                    # Add extra split for nodes resource and it's respective
+                    # properties
+                    if 'nodes' in type:
+                        for each in type.split (':'):
+                            if ('=' in each):
+                                keyword, value = each.split ('=')
+                                tmp_attr [keyword] = value
+                            else:
+                                tmp_attr [each] = True
+                    else:
+                        # All other resources
+                        if ('=' in type):
+                            keyword, value = type.split ('=')
                             tmp_attr [keyword] = value
                         else:
-                            tmp_attr [each] = True
+                            tmp_attr [type] = True
             elif o in ("-I"):
                 tmp_attr ['Interactive'] = True
             else:

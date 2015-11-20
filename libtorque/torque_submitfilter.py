@@ -3,6 +3,7 @@
 # Spruce Head Node srih0001
 
 import sys, tempfile
+import os, stat
 
 import pbsattr
 from qsubfile import qsubfile 
@@ -98,6 +99,7 @@ def capture_modload (commands):
     tmpfile = tempfile.NamedTemporaryFile (dir = "/shared/moduleaudit", mode = 'w', \
                                         delete = False)
 
+    filename = tmpfile.name
     # Write modulefiles loaded to tmpfile
     for cmd in commands:
         if 'module' in cmd [0]:
@@ -107,7 +109,9 @@ def capture_modload (commands):
                     tmpfile.write ("\n")
 
     tmpfile.close ()
-
+    # Change permissions
+    os.chmod ( filename, stat.S_IRUSR | stat.S_IWUSR \
+            | stat.S_IROTH | stat.S_IWOTH ) 
 
 
 def main ():

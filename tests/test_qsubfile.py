@@ -27,6 +27,11 @@ class TestQsubfileMethods (unittest.TestCase):
         self.assertEqual (self.current.attr ['ppn'], "5")
         self.assertEqual (self.current.attr ['queue'], "standby")
 
+    def test_walltime_parseOpts ( self ):
+        args = "-l nodes=4:ppn=4,pvmem=17gb,walltime=04:00:00".split ()
+        self.current.parseOpts ( args )
+        self.assertEqual ( self.current.attr ['walltime'], "04:00:00" )
+
     def test_commline (self):
         args = "-l nodes=1:ppn=3,pvmem=5GB -q standby -l ppn=5".split ()
         self.current.commline (args)

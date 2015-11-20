@@ -53,8 +53,8 @@ class qsubfile (PBSattr):
                         if ('=' in each):
                             keyword, value = each.split ('=')
                             tmp_attr [keyword] = value
-                    else:
-                        tmp_attr [each] = True
+                        else:
+                            tmp_attr [each] = True
             elif o in ("-I"):
                 tmp_attr ['Interactive'] = True
             else:
@@ -88,7 +88,7 @@ class qsubfile (PBSattr):
             if (line.startswith ('#')):
                 if (line.startswith ('#PBS ')):
                     if (parse_directives):
-                        for directive in line.strip ('#PBS ').split (' '):
+                        for directive in line.lstrip ('#PBS ').split (' '):
                             args.append (directive)
                     else:
                         sys.stderr.write ("%s not processed\n" 

@@ -3,23 +3,26 @@
 # Spruce Head Node srih0001
 
 import sys, tempfile
-import os, stat
+import os, stat, getopt
 
 import pbsattr
 from qsubfile import qsubfile 
 from qsub_error import illegalMemReq, illegalMemAttributes, illegalCommand
 
-def rtn_filename (curr_obj):
+def rtn_filename ( curr_obj ):
     """Given sys.argv[1:] return input of filename"""
 
-    args = sys.argv[1:]
-    nargs = len (args)
+    args = sys.argv [ 1: ]
+    nargs = len ( args )
 
-    if (nargs >= 1):
-        leftovers = curr_obj.parseOpts (args)
+    if ( nargs >= 1 ):
+        leftovers = curr_obj.commline ( args )
 
-        if (len (leftovers) > 0):
-            filename = leftovers [0]
+        if ( len ( leftovers ) == 1 ):
+            filename = leftovers [ 0 ]
+        elif ( len ( leftovers ) > 1 ):
+            sys.stderr.write ( "Index error\n\n" )
+            sys.exit ( 1 )
         else:
             filename = "STDIN"
     else:
@@ -122,45 +125,43 @@ def main ():
 
     try:
         filename = rtn_filename ( curr_job ) 
-    except getopt.GetoptError:
-        sys.exit ( 0 )
-    except:
-        sys.exit ( 0 )
+    except getopt.GetoptError as err:
+        # Catch invalid options
+        print ( err )
+        curr_job.usage ()
+        sys.exit ( 2 )
     
     # Add file directives and commands to PBS attributes
     # if job is not interactive
     if ( not curr_job.attr ['Interactive'] ):
         try:
             curr_job.processfile ( filename )
-        except OSError:
-            # Let qsub deal with I/O Errors as normal
-            sys.exit ( 0 )
+        except IOError:
+            # File does not exist or can't be opened
+            sys.stderr.write ( "script file '" + filename + "' cannot be " )
+            sys.stderr.write ( "loaded - No such file or directory\n\n" )
+            sys.exit ( 1 )
         except getopt.GetoptError:
-            sys.exit ( 0 )
-        except:
-            sys.exit ( 0 )
+            print ( err )
+            curr_job.usage ()
+            sys.exit ( 2 )
 
         # Check commands and capture module files as well
         try:
             chk_commands ( curr_job.comm )
         except illegalCommand as e:
             e.exit_message ()
-            sys.exit ( -1 )
-        except:
-            sys.exit ( 0 )
-
+            sys.exit ( 1 )
      
     # Check memory on all Jobs
     try:
         chk_rtn = chk_memory ( curr_job.attr )
     except illegalMemReq as e:
         e.exit_message ()
-        sys.exit ( -1 )
+        sys.exit ( 1 )
     except illegalMemAttributes as e:
         e.exit_message ()
-        sys.exit ( -1 )
-    except:
-        sys.exit ( 0 )
+        sys.exit ( 1 )
 
     # Illegal memory attributes - qsub will catch error
     if ( not chk_rtn ):

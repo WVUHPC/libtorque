@@ -53,6 +53,11 @@ class TestQsubfileMethods (unittest.TestCase):
         self.assertEqual (leftover [0], 'filename')
 
     def test_processfile ( self ):
+        self.current.processfile ( "sample2.pbs", printfile = False )
+
+        self.assertEqual ( self.current.attr ['queue'], "jshawkins" )
+
+    def test_processfile ( self ):
         qsubfile = "#!/bin/sh\n#PBS -l nodes=1:ppn=3,pvmem=5GB\n" +  \
             "#PBS -q standby\nmodule load mpi/openmpi/1.6.5\n" +  \
             "echo Hello"
@@ -92,6 +97,5 @@ class TestQsubfileMethods (unittest.TestCase):
         os.unlink ( filename )
         os.unlink ( tmpoutfile )
         
-
 if __name__ == '__main__':
     unittest.main()

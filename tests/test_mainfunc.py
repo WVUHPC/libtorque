@@ -47,6 +47,7 @@ class TestMainMethods ( unittest.TestCase ):
         self.assertRaises ( illegalCommand, chk_commands, comm )
 
 
+
 if __name__ == '__main__':
     unittest.main()
 

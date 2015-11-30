@@ -27,10 +27,26 @@ class qsubfile (PBSattr):
         # Return all Commands
         return processed_commands
 
+    def usage ( self ):
+        """ Print qsub usage message if getopt Error occurs """
+
+        sys.stderr.write ( "usage: qsub [-a data_time] [-A account_string] [-" )
+        sys.stderr.write ( "b secs]\n\t[-c [ none | { enabled | periodic | " )
+        sys.stderr.write ( "shutdown |\n\tdepth=<int> | dir=<path> | interva " )
+        sys.stderr.write ( "l=<minutes>}... ]\n\t[-C directive_prefix] -d pa" )
+        sys.stderr.write ( "th] [-D path]\n\t[-e path] [-h] [-I] [-j oe|eo|n]" )
+        sys.stderr.write ( " [-k {oe}] [-l resource_list] [-m n|{abe}]\n\t" ) 
+        sys.stderr.write ( "[-M user_list] [-N jobname] [-o path] [-p " )
+        sys.stderr.write ( "priority] [-P proxy_user [-J <jobid]]\n\t" )
+        sys.stderr.write ( "[-q queue] [-r y|n] [-S path] [-t number_to_" )
+        sys.stderr.write ( "submit] [-T type] [-u user_list] [-w] path\n\t" )
+        sys.stderr.write ( "[-W additional_attributes] [-v variable_list]" )
+        sys.stderr.write ( " [-V] [-x] [-X] [-z] [script]\n\n" )
+
     def commline (self, args):
         "Wrapper for parseOpts for CLI options"
 
-        self.parseOpts (args, overWrite=True)
+        return self.parseOpts (args, overWrite=True)
 
     def parseOpts (self, options, overWrite=False):
         """Parse options list, sending each value to the correct PBSattr

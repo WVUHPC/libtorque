@@ -16,7 +16,7 @@ class illegalMemReq ( Error ):
         sys.stderr.write ( "\tUsing 'vmem' and/or 'mem' resource on this" )
         sys.stderr.write ( " queue is not permitted.\n" )
         sys.stderr.write ( "\tSetting 'vmem' or 'mem' will not" )
-        sys.stderr.write ( "change the default 'pvmem' " )
+        sys.stderr.write ( " change the default 'pvmem' " )
         sys.stderr.write ( "\n\tmemory setting of 3 GB which is the amount of " ) 
         sys.stderr.write ( "memory per process.\n\tPlease visit ")
         sys.stderr.write ( "http://goo.gl/vF3UgX for more information.\n\n\n" )
@@ -40,7 +40,7 @@ class illegalMemAttributes ( Error ):
                 self.pvmem + ", the max number for ppn can be " +  \
                 self.availMem + ".\n" )
         sys.stderr.write ( "\tPlease visit http://goo.gl/vF3UgX for more" )
-        sys.stderr.write ( "information.\n\n\n" )
+        sys.stderr.write ( " information.\n\n\n" )
 
 class illegalCommand ( Error ):
     """ Exception raised for using illegal commands. """

@@ -27,10 +27,26 @@ class qsubfile (PBSattr):
         # Return all Commands
         return processed_commands
 
+    def usage ( self ):
+        """ Print qsub usage message if getopt Error occurs """
+
+        sys.stderr.write ( "usage: qsub [-a data_time] [-A account_string] [-" )
+        sys.stderr.write ( "b secs]\n\t[-c [ none | { enabled | periodic | " )
+        sys.stderr.write ( "shutdown |\n\tdepth=<int> | dir=<path> | interva " )
+        sys.stderr.write ( "l=<minutes>}... ]\n\t[-C directive_prefix] -d pa" )
+        sys.stderr.write ( "th] [-D path]\n\t[-e path] [-h] [-I] [-j oe|eo|n]" )
+        sys.stderr.write ( " [-k {oe}] [-l resource_list] [-m n|{abe}]\n\t" ) 
+        sys.stderr.write ( "[-M user_list] [-N jobname] [-o path] [-p " )
+        sys.stderr.write ( "priority] [-P proxy_user [-J <jobid]]\n\t" )
+        sys.stderr.write ( "[-q queue] [-r y|n] [-S path] [-t number_to_" )
+        sys.stderr.write ( "submit] [-T type] [-u user_list] [-w] path\n\t" )
+        sys.stderr.write ( "[-W additional_attributes] [-v variable_list]" )
+        sys.stderr.write ( " [-V] [-x] [-X] [-z] [script]\n\n" )
+
     def commline (self, args):
         "Wrapper for parseOpts for CLI options"
 
-        self.parseOpts (args, overWrite=True)
+        return self.parseOpts (args, overWrite=True)
 
     def parseOpts (self, options, overWrite=False):
         """Parse options list, sending each value to the correct PBSattr
@@ -49,12 +65,22 @@ class qsubfile (PBSattr):
             elif o in ("-l"):
                 # Parse resource into mapping attribute
                 for type in a.split (','):
-                    for each in type.split (':'):
-                        if ('=' in each):
-                            keyword, value = each.split ('=')
+                    # Add extra split for nodes resource and it's respective
+                    # properties
+                    if 'nodes' in type:
+                        for each in type.split (':'):
+                            if ('=' in each):
+                                keyword, value = each.split ('=')
+                                tmp_attr [keyword] = value
+                            else:
+                                tmp_attr [each] = True
+                    else:
+                        # All other resources
+                        if ('=' in type):
+                            keyword, value = type.split ('=')
                             tmp_attr [keyword] = value
                         else:
-                            tmp_attr [each] = True
+                            tmp_attr [type] = True
             elif o in ("-I"):
                 tmp_attr ['Interactive'] = True
             else:
@@ -66,40 +92,49 @@ class qsubfile (PBSattr):
         return args
 
 
-    def processfile (self, fn):
+    def processfile ( self, fn, printfile = True, outfile = False ):
         """Scan qsub file (or STDIN) identifing PBS directives or commands and
         process according."""
 
 
-        if ('STDIN' == fn):
+        if ( 'STDIN' == fn ):
             input = sys.stdin
         else:
-            input = open (fn, 'r')
+            input = open ( fn, 'r' )
 
         args = [ ]
         parse_directives = True
 
+        # Setup outfile if any
+        if ( outfile ):
+            output = open ( outfile, 'w' )
+        else:
+            output = sys.stdout
+
         for line in input:
+            # Make sure submit script echoed to STDOUT for qsub command
+            if ( printfile ):
+                output.write ( line )
             # Skip empty lines
-            if (re.match (r'^$', line)):
+            if ( re.match ( r'^$', line ) ):
                 continue;
 
-            line = line.strip('\n')
-            if (line.startswith ('#')):
-                if (line.startswith ('#PBS ')):
-                    if (parse_directives):
-                        for directive in line.lstrip ('#PBS ').split (' '):
-                            args.append (directive)
-                    else:
-                        sys.stderr.write ("%s not processed\n" 
-                                % line.strip ('#PBS'))
+            line = line.strip ( '\n' )
+            if ( line.startswith ( '#' ) ):
+                if ( line.startswith ( '#PBS ' ) ):
+                    if ( parse_directives ):
+                        for directive in line.lstrip ( '#PBS ' ).split ( ' ' ):
+                            args.append ( directive )
             else:
-                if (parse_directives):
+                if ( parse_directives ):
                     parse_directives = False
-                for each in self.parse_comm (line):
-                    PBSattr.add_command (self, each)
+                for each in self.parse_comm ( line ):
+                    PBSattr.add_command ( self, each )
 
         # Parse Options in correct order
-        self.parseOpts (args)
+        self.parseOpts ( args )
 
+        if ( outfile ):
+            output.close ()
+        input.close ()
                

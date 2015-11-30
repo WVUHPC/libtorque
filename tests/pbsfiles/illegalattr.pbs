@@ -1,0 +1,7 @@
+#!/bin/sh
+
+#PBS -N name
+#PBS -q comm_mmem_day
+#PBS -l nodes=1:ppn=16,pvmem=5GB
+
+mpirun -np 16 $PBS_NODEFILE cmd1

@@ -135,6 +135,7 @@ def main ():
     # if job is not interactive
     if ( not curr_job.attr ['Interactive'] ):
         try:
+            # file will be printed to STDOUT during next call
             curr_job.processfile ( filename )
         except IOError:
             # File does not exist or can't be opened
@@ -152,6 +153,10 @@ def main ():
         except illegalCommand as e:
             e.exit_message ()
             sys.exit ( 1 )
+        except:
+            # Any other error (i.e. IndexError, etc...) - exit with clean status
+            # and let qsub deal with the file
+            sys.exit ( 0 )
      
     # Check memory on all Jobs
     try:
@@ -162,6 +167,10 @@ def main ():
     except illegalMemAttributes as e:
         e.exit_message ()
         sys.exit ( 1 )
+    except:
+        # Any other error - exit with clean status and let qsub deal with the
+        # file
+        sys.exit ( 0 )
 
     # Illegal memory attributes - qsub will catch error
     if ( not chk_rtn ):
@@ -169,7 +178,11 @@ def main ():
 
     # Audit module files
     if ( not curr_job.attr ['Interactive'] ):
-        capture_modload ( curr_job.comm )
+        try:
+            capture_modload ( curr_job.comm )
+        except:
+            # Any error - exit with clean status (abort module capture)
+            sys.exit ( 0 )
 
     # Exit clean if everything appears correct
     sys.exit ( 0 )

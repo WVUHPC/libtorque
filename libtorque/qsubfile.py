@@ -115,8 +115,8 @@ class qsubfile (PBSattr):
             # Make sure submit script echoed to STDOUT for qsub command
             if ( printfile ):
                 output.write ( line )
-            # Skip empty lines
-            if ( re.match ( r'^$', line ) ):
+            # Skip empty lines or lines with only whitespace
+            if ( re.match ( r'^\s*$', line ) ):
                 continue;
 
             line = line.strip ( '\n' )

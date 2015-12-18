@@ -1,0 +1,6 @@
+
+* refactor audit functions into a class structure
+* refactor submitfilter into classes (simplify the API)
+* Add a test harness for automated testing
+* Add documentation
+* Package in PyPI

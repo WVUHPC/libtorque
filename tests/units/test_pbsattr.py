@@ -6,8 +6,7 @@
 import os.path, sys
 import unittest
 
-sys.path.append (os.path.realpath ("../libtorque"))
-from pbsattr import PBSattr
+from libtorque.pbsattr import PBSattr
 
 
 class TestpbsattrMethods (unittest.TestCase):

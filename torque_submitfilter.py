@@ -5,10 +5,10 @@
 import sys, tempfile
 import os, stat, getopt
 
-import pbsattr
-from qsubfile import qsubfile 
-from qsub_error import illegalMemReq, illegalMemAttributes, illegalCommand
-from qsub_error import illegalConfig
+from libtorque import pbsattr
+from libtorque.qsubfile import qsubfile 
+from libtorque.qsub_error import illegalMemReq, illegalMemAttributes, illegalCommand
+from libtorque.qsub_error import illegalConfig
 
 def rtn_filename ( curr_obj ):
     """Given sys.argv[1:] return input of filename"""

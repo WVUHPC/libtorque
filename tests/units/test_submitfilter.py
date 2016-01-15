@@ -6,10 +6,9 @@
 import os.path, sys
 import unittest
 
-sys.path.append ( os.path.realpath ( "../libtorque" ) )
-from qsub_error import illegalMemReq, illegalMemAttributes, illegalCommand
+from libtorque.qsub_error import illegalMemReq, illegalMemAttributes, illegalCommand
 from torque_submitfilter import rtn_filename, chk_memory, chk_commands
-from qsubfile import qsubfile
+from libtorque.qsubfile import qsubfile
 
 
 class TestMainMethods ( unittest.TestCase ):
@@ -45,7 +44,6 @@ class TestMainMethods ( unittest.TestCase ):
         comm = [ ]
         comm.append ( "qsub submitfile.sh".split () )
         self.assertRaises ( illegalCommand, chk_commands, comm )
-
 
 
 if __name__ == '__main__':

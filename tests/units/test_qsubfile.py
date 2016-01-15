@@ -8,8 +8,7 @@ import subprocess
 
 import unittest
 
-sys.path.append (os.path.realpath ("../libtorque"))
-from qsubfile import qsubfile
+from libtorque.qsubfile import qsubfile
 
 class TestQsubfileMethods (unittest.TestCase):
     "Test Qsubfile class methods"

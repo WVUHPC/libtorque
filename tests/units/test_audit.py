@@ -7,9 +7,8 @@ import os, sys
 import sqlite3, tempfile
 import unittest
 
-sys.path.append ( os.path.realpath ( "../libtorque/audit" ) )
-from condense_audit import hashadd, hash_from_file, ins_hash_sqlite
-from condense_audit import rtn_epoch, create_table
+from libtorque.audit.condense_audit import hashadd, hash_from_file, ins_hash_sqlite
+from libtorque.audit.condense_audit import rtn_epoch, create_table
 
 class TestMainMethods ( unittest.TestCase ):
     "Test submitfilter main methods"

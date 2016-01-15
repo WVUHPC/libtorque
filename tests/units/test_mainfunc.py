@@ -6,10 +6,9 @@
 import os.path, sys
 import unittest
 
-sys.path.append ( os.path.realpath ( "../libtorque" ) )
-from qsub_error import illegalMemReq, illegalMemAttributes, illegalCommand
+from libtorque.qsub_error import illegalMemReq, illegalMemAttributes, illegalCommand
 from torque_submitfilter import rtn_filename, chk_memory, chk_commands
-from qsubfile import qsubfile
+from libtorque.qsubfile import qsubfile
 
 
 class TestMainMethods ( unittest.TestCase ):
@@ -17,6 +16,7 @@ class TestMainMethods ( unittest.TestCase ):
 
     def test_rtn_filename ( self ):
         current = qsubfile ()
+        sys.argv = []
         self.assertEqual ( rtn_filename (current), "STDIN" )
         sys.argv = ( "filename -l nodes=1 pbsfile.sh".split () )
         self.assertEqual ( rtn_filename (current), "pbsfile.sh" )
@@ -45,6 +45,7 @@ class TestMainMethods ( unittest.TestCase ):
         comm = [ ]
         comm.append ( "qsub submitfile.sh".split () )
         self.assertRaises ( illegalCommand, chk_commands, comm )
+
 
 
 if __name__ == '__main__':

@@ -8,6 +8,7 @@ import os, stat, getopt
 import pbsattr
 from qsubfile import qsubfile 
 from qsub_error import illegalMemReq, illegalMemAttributes, illegalCommand
+from qsub_error import illegalConfig
 
 def rtn_filename ( curr_obj ):
     """Given sys.argv[1:] return input of filename"""
@@ -44,17 +45,6 @@ def chk_memory (attr):
 
     maxMem = 54
 
-    # Exit for illegal memory management attributes
-    if ('vmem' in attr or 'mem' in attr):
-        raise illegalMemReq ()
-
-    # Return if memory not specified 
-    if 'pvmem' not in attr:
-        return True
-
-    pvmem_orig = attr ['pvmem']
-    pvmem = attr ['pvmem'].lower ()
-   
     # Define processor per node
     if 'procs' in attr:
         if (int (attr ['procs']) > 16):
@@ -66,6 +56,20 @@ def chk_memory (attr):
     else:
         ppn = 1
 
+    if ( ppn > 16 ):
+        raise illegalConfig ( attr ['queue'], attr ['ppn'] )
+
+    # Exit for illegal memory management attributes
+    if ('vmem' in attr or 'mem' in attr):
+        raise illegalMemReq ()
+
+    # Return if memory not specified 
+    if 'pvmem' not in attr:
+        return True
+
+    pvmem_orig = attr ['pvmem']
+    pvmem = attr ['pvmem'].lower ()
+   
     if pvmem.endswith ( "gb" ) or pvmem.endswith ( "gw" ):
         power = 0   
     elif pvmem.endswith ( "mb" ) or pvmem.endswith ( "mw" ):
@@ -165,6 +169,9 @@ def main ():
         e.exit_message ()
         sys.exit ( 1 )
     except illegalMemAttributes as e:
+        e.exit_message ()
+        sys.exit ( 1 )
+    except illegalConfig as e:
         e.exit_message ()
         sys.exit ( 1 )
     except:

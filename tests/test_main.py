@@ -36,6 +36,12 @@ class TestMain ( unittest.TestCase ):
         exit_code = subprocess.call ( self.comm )
         self.assertEqual ( exit_code, 1 )
 
+    def test_illegal_ppn ( self ):
+        """ illegalppn.pbs gives a 1 exit status """
+        self.comm.append ( "pbsfiles/illegalppn.pbs" )
+        exit_code = subprocess.call ( self.comm )
+        self.assertEqual ( exit_code, 1 )
+
     def test_multiple_files ( self ):
         """ multiple files should give a -1 exit status """
         self.comm.append ( "pbsfiles/working.pbs" )

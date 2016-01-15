@@ -49,15 +49,16 @@ def hash_from_file ( fname ):
 def create_table ( fn ):
     """ Create necessary module table given a filename """
 
-    if ( os.path.isfile ( fn ) ):
-        return True
-
     conn = sqlite3.connect ( fn )
-    c = conn.cursor ()
 
-    c.execute ( '''CREATE TABLE modules
+    # Check if tables exist
+    if ( check_table ( conn ) ):
+        return True
+    else:
+        c = conn.cursor ()
+        c.execute ( '''CREATE TABLE modules
                     (module text, loads integer, epoch real)''' )
-    c.execute ( '''CREATE TABLE ledger
+        c.execute ( '''CREATE TABLE ledger
                     (epoch real, filenum integer, modload integer)''')
 
     conn.commit ()
@@ -65,6 +66,15 @@ def create_table ( fn ):
 
     return True
 
+def check_table ( conn ):
+    c = conn.cursor()
+
+    try:
+        c.execute ( '''SELECT * FROM modules''' )
+    except:
+        return False
+
+    return True
 
 
 def ins_hash_sqlite ( fn, hash, epoch):

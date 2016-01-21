@@ -6,7 +6,7 @@
 import os.path, sys
 import unittest
 
-from libtorque.pbsattr import PBSattr
+from torquefilter.qsub.pbsattr import PBSattr
 
 
 class TestpbsattrMethods (unittest.TestCase):

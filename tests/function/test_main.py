@@ -10,7 +10,7 @@ class TestMain ( unittest.TestCase ):
     "Test submitfilter exit status"
 
     def setUp ( self ):
-        self.comm = ["../../torque_submitfilter.py"]
+        self.comm = ["scripts/filter.py"]
 
     def test_working ( self ):
         """ working.pbs gives a zero exit status """

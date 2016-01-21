@@ -6,9 +6,11 @@
 import os.path, sys
 import unittest
 
-from libtorque.qsub_error import illegalMemReq, illegalMemAttributes, illegalCommand
-from torque_submitfilter import rtn_filename, chk_memory, chk_commands
-from libtorque.qsubfile import qsubfile
+import torquefilter
+
+from torquefilter.error.error import illegalMemReq, illegalMemAttributes, illegalCommand
+from torquefilter.runfilter import rtn_filename, chk_memory, chk_commands
+from torquefilter.qsub.qsubfile import qsubfile
 
 
 class TestMainMethods ( unittest.TestCase ):

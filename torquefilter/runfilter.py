@@ -1,14 +1,10 @@
-#!/bin/env python
-# torque_submitfilter
-# Spruce Head Node srih0001
 
 import sys, tempfile
 import os, stat, getopt
 
-from libtorque import pbsattr
-from libtorque.qsubfile import qsubfile 
-from libtorque.qsub_error import illegalMemReq, illegalMemAttributes, illegalCommand
-from libtorque.qsub_error import illegalConfig
+from qsub.qsubfile import qsubfile
+from error.error import illegalMemReq, illegalMemAttributes, illegalCommand
+from error.error import illegalConfig
 
 def rtn_filename ( curr_obj ):
     """Given sys.argv[1:] return input of filename"""
@@ -30,20 +26,20 @@ def rtn_filename ( curr_obj ):
         filename = "STDIN"
 
     return filename
-  
-def chk_memory (attr):
+
+def chk_memory ( attr ):
     """Check PBS resources for correct memory amount"""
 
-    queuesToCheck = ['comm_mmem_week', 'comm_mmem_day']
+    global __systemspecs__
+    system = __systemspecs__
 
     # Return if community node not specified
     if 'queue' in attr:
-        if attr ['queue'] not in queuesToCheck:
+        if attr ['queue'] not in system.queuesToCheck:
             return True
     else:
         return True
 
-    maxMem = 54
 
     # Define processor per node
     if 'procs' in attr:
@@ -86,21 +82,22 @@ def chk_memory (attr):
     totalMem = pvmem * ppn
     availMem = maxMem / pvmem
 
-    if (totalMem > maxMem):
+    if (totalMem > system.maxMem):
         raise illegalMemAttributes ( int ( totalMem ), attr ['queue'], \
                             pvmem_orig, int ( availMem ) )
 
     return True
 
-def chk_commands (commands):
+def chk_commands ( commands ):
     
-    commandsToCheck = ["qsub", "msub", "ssh", "scp"]
-
+    global __systemspecs__
+    system = __systemspecs__
+    
     for cmd in commands:
-        if cmd [0] in commandsToCheck:
+        if cmd [0] in system.commandsToCheck:
             raise illegalCommand ( cmd [0] )
 
-def capture_modload (commands):
+def capture_modload ( commands ):
 
     # Open a temporary file to write to with a unique name
     tmpfile = tempfile.NamedTemporaryFile (dir = "/shared/moduleaudit", mode = 'w', \
@@ -121,28 +118,28 @@ def capture_modload (commands):
             | stat.S_IROTH | stat.S_IWOTH ) 
 
 
-def main ():
-    """Interface CLI options and Qsubfile options given by qsub command"""
 
-    # Create an empty job process
-    curr_job = qsubfile ()
+def runfilter ():
+    """ Run configured job submission filter """
 
+    global __systemspecs__
+
+    curr_job = qsubfile.qsubfile ()
+
+    # Read CLI options for filename
     try:
-        filename = rtn_filename ( curr_job ) 
+        filename = rtn_filename ( curr_job )
     except getopt.GetoptError as err:
-        # Catch invalid options
         print ( err )
         curr_job.usage ()
         sys.exit ( 2 )
-    
+
     # Add file directives and commands to PBS attributes
     # if job is not interactive
     if ( not curr_job.attr ['Interactive'] ):
         try:
-            # file will be printed to STDOUT during next call
             curr_job.processfile ( filename )
         except IOError:
-            # File does not exist or can't be opened
             sys.stderr.write ( "script file '" + filename + "' cannot be " )
             sys.stderr.write ( "loaded - No such file or directory\n\n" )
             sys.exit ( 1 )
@@ -151,35 +148,32 @@ def main ():
             curr_job.usage ()
             sys.exit ( 2 )
 
-        # Check commands and capture module files as well
+    # Check for illegal commands
+    if ( __systemspecs__.ill_comm ): 
         try:
             chk_commands ( curr_job.comm )
         except illegalCommand as e:
             e.exit_message ()
             sys.exit ( 1 )
         except:
-            # Any other error (i.e. IndexError, etc...) - exit with clean status
-            # and let qsub deal with the file
             sys.exit ( 0 )
-     
-    # Check memory on all Jobs
-    try:
-        chk_rtn = chk_memory ( curr_job.attr )
-    except illegalMemReq as e:
-        e.exit_message ()
-        sys.exit ( 1 )
-    except illegalMemAttributes as e:
-        e.exit_message ()
-        sys.exit ( 1 )
-    except illegalConfig as e:
-        e.exit_message ()
-        sys.exit ( 1 )
-    except:
-        # Any other error - exit with clean status and let qsub deal with the
-        # file
-        sys.exit ( 0 )
 
-    # Illegal memory attributes - qsub will catch error
+    # Check for illegal attributes
+    if ( __systemspecs.ill_attr ):
+        try:
+            chk_rtn = chk_memory ( curr_job.attr )
+        except illegalMemReq as e:
+            e.exit_message ()
+            sys.exit ( 1 )
+        except illegalMemAttributes as e:
+            e.exit_message ()
+            sys.exit ( 1 )
+        except illegalConfig as e:
+            e.exit_message ()
+            sys.exit ( 1 )
+        except:
+            sys.exit ( 0 )
+
     if ( not chk_rtn ):
         sys.exit ( 0 )
 
@@ -188,12 +182,7 @@ def main ():
         try:
             capture_modload ( curr_job.comm )
         except:
-            # Any error - exit with clean status (abort module capture)
             sys.exit ( 0 )
 
-    # Exit clean if everything appears correct
+    # Exit clean
     sys.exit ( 0 )
-    
-
-if __name__ == '__main__':
-    main()

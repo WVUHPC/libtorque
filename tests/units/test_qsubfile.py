@@ -8,7 +8,7 @@ import subprocess
 
 import unittest
 
-from libtorque.qsubfile import qsubfile
+from torquefilter.qsub.qsubfile import qsubfile
 
 class TestQsubfileMethods (unittest.TestCase):
     "Test Qsubfile class methods"

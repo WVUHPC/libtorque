@@ -1,6 +1,6 @@
 
 #!/bin/env python
-# Test Qsubfile Class
+# Test PBSattr Class
 
 
 import os.path, sys

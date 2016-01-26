@@ -1,5 +1,5 @@
-import sys, re, getopt
 
+import sys, re, getopt
 from pbsattr import PBSattr
 
 class qsubfile (PBSattr):

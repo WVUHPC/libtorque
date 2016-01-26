@@ -6,7 +6,6 @@ class PBSattr:
     def __init__ (self):
         self.attr       =   { }
         self.comm       =   [ ]
-        self.num_com    =   0
         self.attr ['Interactive'] = False
 
     def __chk_duplicate (self, attr):

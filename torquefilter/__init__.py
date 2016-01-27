@@ -166,7 +166,7 @@ class torqueFilter ( qsubfile.qsubfile ):
             sys.exit ( 1 )
 
         try:
-            chk_rtn = self.check_memory ()
+            chk_rtn = self.chk_memory ()
         except illegalMemAttributes as e:
             e.exit_message ()
             sys.exit ( 1 )

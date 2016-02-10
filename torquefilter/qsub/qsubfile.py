@@ -1,6 +1,6 @@
-import sys, re, getopt
 
-from pbsattr import PBSattr
+import sys, re, getopt
+from torquefilter.qsub.pbsattr import PBSattr
 
 class qsubfile (PBSattr):
     "Class for PBS directives during job submission files"

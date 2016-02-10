@@ -1,13 +1,12 @@
 
 #!/bin/env python
-# Test Qsubfile Class
+# Test PBSattr Class
 
 
 import os.path, sys
 import unittest
 
-sys.path.append (os.path.realpath ("../libtorque"))
-from pbsattr import PBSattr
+from torquefilter.qsub.pbsattr import PBSattr
 
 
 class TestpbsattrMethods (unittest.TestCase):

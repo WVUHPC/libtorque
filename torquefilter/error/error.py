@@ -56,3 +56,18 @@ class illegalCommand ( Error ):
         sys.stderr.write ("\tIf you feel this is in error, " + \
             "please open a help desk ticket at\n")
         sys.stderr.write ("\thttps://helpdesk.hpc.wvu.edu.\n\n\n")
+
+class illegalConfig ( Error ):
+    """ Exception raised for using ppn > 16 on community nodes """
+
+    def __init__ ( self, queue, ppn ):
+        self.queue      =       queue
+        self.ppn        =       ppn
+
+    def exit_message ( self ):
+        sys.stderr.write ( "\n\tERROR: You are requesting " + self.ppn + \
+            " processors per node in the " + self.queue + "\n\tqueue class." )
+        sys.stderr.write ( " You can only request a maximum of 16 cores " + \
+            "in " + self.queue + ".\n" )
+        sys.stderr.write ( "\tThis can be done by reducing your ppn setting to " + \
+            "below 16.\n\n\n")

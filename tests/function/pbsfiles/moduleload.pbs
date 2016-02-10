@@ -4,4 +4,5 @@
 #PBS -q comm_mmem_day
 #PBS -l nodes=1:ppn=4,pvmem=2GB
 
-mpirun -np 16 -host $PBS_NODEFILE cmd1
+module load module1 module2 module3
+mpirun -np 16 $PBS_NODEFILE cmd1

@@ -10,20 +10,23 @@ sys.path.append ( cwd )
 import torquefilter
 from torquefilter import audit
 
+# Remove tmp filename from command-line parameters
+outputfile = sys.argv.pop ()
+
 current_job = torquefilter.torqueFilter ()
 
 # Run filter
 current_job.runfilter ()
 
-
-tellme = audit.jobauditer ()
-tellme.init ( current_job )
+tellme = audit.jobauditer ( current_job )
+tellme.init ( outputfile )
 
 tellme.command ( 'mpirun' )
-tellme.command ( 'module', ['load'], 'Module Loads' )
+tellme.command ( 'module', ['load'] )
 tellme.commandArgs ( 'mpirun', ['-np', '-host'] )
 tellme.commandSlice ( 'module', ['load'], start=2, tableName="Loaded Modules" )
 
 tellme.attr ('queue')
 
 tellme.runaudit ()
+

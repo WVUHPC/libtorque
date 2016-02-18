@@ -15,33 +15,36 @@ class TestMain ( unittest.TestCase ):
         command = self.path + "/scripts/audit.py"
         self.comm = [command]
 
-        tmpfile = tempfile.NamedTemporaryFile ( mode 'w', delete=False )
+        tmpfile = tempfile.NamedTemporaryFile ( mode = 'w', delete=False )
         self.tmpfile = tmpfile.name
         tmpfile.close ()
 
     def tearDown ( self ):
-        self.tmpfile.close ()
         os.unlink ( self.tmpfile )
 
     def test_working_audit ( self ):
-        """ working.pbs gives a zero exit status """
-        self.comm.append ( self.path + self.tmpfile + "/pbsfiles/working.pbs" )
+        """ Audit working.pbs """
+        self.comm.append ( self.path + "/pbsfiles/working.pbs" )
+        self.comm.append ( self.tmpfile )
         exit_code = subprocess.call ( self.comm )
         self.assertEqual ( exit_code, 0 )
 
         # Check tmpfile for correct JSON structures
         current = open ( self.tmpfile )
         decoder = json.JSONDecoder ()
-        jsonData = decoder ( json.load ( current ) )
+        jsonData = decoder.decode ( json.load ( current ) )
 
-        self.assertEqual ( jsonData ['Commands'][0], 'mpirun' )
-        self.assertEqual ( jsonData ['mpirun']['-np'], '16' )
-        self.assertEqual ( jsonData ['mpirun']['-host'], '$PBS_NODEFILE' )
+        self.assertEqual ( jsonData ['Commands'][0][0], 'mpirun' )
+        self.assertEqual ( jsonData ['mpirun'][0]['-np'], '16' )
+        self.assertEqual ( jsonData ['mpirun'][0]['-host'], '$PBS_NODEFILE' )
         self.assertEqual ( jsonData ['queue'], 'comm_mmem_day' )
 
+        current.close ()
+
     def test_module_audit ( self ):
-        """ illegalcomm.pbs gives a -1 exit status """
-        self.comm.append ( self.path + self.tmpfile + "/pbsfiles/moduleload.pbs" )
+        """ Audit moduleload.pbs """
+        self.comm.append ( self.path + "/pbsfiles/moduleload.pbs" )
+        self.comm.append ( self.tmpfile )
         exit_code = subprocess.call ( self.comm )
         self.assertEqual ( exit_code, 0 )
 
@@ -49,18 +52,18 @@ class TestMain ( unittest.TestCase ):
         current = open ( self.tmpfile )
         decoder = json.JSONDecoder ()
 
-        jsonData = decoder ( json.load ( current ) )
+        jsonData = decoder.decode ( json.load ( current ) )
 
         # Check JSON data ( python dictionary )
-        self.assertEqual ( jsonData ['Commands'][0], 'mpirun' )
-        self.assertEqual ( jsonData ['mpirun']['-np'], '16' )
-        self.assertEqual ( jsonData ['mpirun']['-host'], '$PBS_NODEFILE' )
+        self.assertEqual ( jsonData ['Commands'][0][0], 'mpirun' )
+        self.assertEqual ( jsonData ['mpirun'][0]['-np'], '16' )
         self.assertEqual ( jsonData ['queue'], 'comm_mmem_day' )
 
-        self.assertEqual ( jsonData ['Module Loads'][0], 'module' )
-        self.assertEqual ( jsonData ['Loaded Modules'][0], 'module1' )
-        self.assertEqual ( jsonData ['Loaded Modules'][1], 'module2' )
-        self.assertEqual ( jsonData ['Loaded Modules'][2], 'module3' )
+        self.assertEqual ( jsonData ['Commands'][1][0], 'module' )
+        self.assertEqual ( jsonData ['Loaded Modules'][0], \
+                                    ['module1', 'module2', 'module3'] )
+
+        current.close ()
 
 
 if __name__ == '__main__':

@@ -2,8 +2,8 @@
 import sys, tempfile
 import os, stat, getopt
 
-from torquefilter.error.error import illegalConfig, illegalCommand
-from torquefilter.error.error import illegalMemReq, illegalMemAttributes
+from torquefilter.error import illegalConfig, illegalCommand
+from torquefilter.error import illegalMemReq, illegalMemConfig
 from torquefilter.qsub import qsubfile
 
 class torqueFilter ( qsubfile.qsubfile ):
@@ -79,7 +79,7 @@ class torqueFilter ( qsubfile.qsubfile ):
             ppn = 1
 
         if ( ppn > 16 ):
-            raise illegalConfig ( self.attr ['queue'], self.attr ['ppn'] )
+            raise illegalConfig ( self.attr )
 
         # Return if memory not specified 
         if 'pvmem' not in self.attr:
@@ -105,7 +105,7 @@ class torqueFilter ( qsubfile.qsubfile ):
         availMem = self.maxMem / pvmem
 
         if (totalMem > self.maxMem):
-            raise illegalMemAttributes ( int ( totalMem ), self.attr ['queue'], \
+            raise illegalMemConfig ( int ( totalMem ), self.attr ['queue'], \
                                 pvmem_orig, int ( availMem ) )
 
         return True
@@ -151,31 +151,9 @@ class torqueFilter ( qsubfile.qsubfile ):
                 sys.exit ( 2 )
     
             # Check for illegal commands
-            try:
-                self.chk_commands ()
-            except illegalCommand as e:
-                e.exit_message ()
-                sys.exit ( 1 )
-            except:
-                sys.exit ( 0 )
+            self.chk_commands ()
 
         # Check illegal attributes on all jobs ( including interactive )
-        try:
-            self.chk_attr ()
-        except illegalMemReq as e:
-            e.exit_message ()
-            sys.exit ( 1 )
+        self.chk_attr ()
 
-        try:
-            chk_rtn = self.chk_memory ()
-        except illegalMemAttributes as e:
-            e.exit_message ()
-            sys.exit ( 1 )
-        except illegalConfig as e:
-            e.exit_message ()
-            sys.exit ( 1 )
-        except:
-            sys.exit ( 0 )
-
-        if ( not chk_rtn ):
-            sys.exit ( 0 )
+        chk_rtn = self.chk_memory ()

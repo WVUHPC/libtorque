@@ -59,7 +59,7 @@ class TestMain ( unittest.TestCase ):
 
     def test_incorrect_file ( self ):
         """ incorrect file name gives a -1 exit status """
-        self.comm.append ( self.path + "/pbsfiles/doesnotexit.pbs" )
+        self.comm.append ( self.path + "/pbsfiles/doesnotexist.pbs" )
         exit_code = subprocess.call ( self.comm )
         self.assertEqual ( exit_code, 1 )
 

@@ -7,8 +7,8 @@ import os.path, sys
 import unittest
 
 import torquefilter
-from torquefilter.error.error import illegalMemReq, illegalCommand
-from torquefilter.error.error import illegalConfig, illegalMemAttributes
+from torquefilter.error import illegalMemReq, illegalCommand
+from torquefilter.error import illegalConfig, illegalMemConfig
 
 class TestTorqueFilterMethods ( unittest.TestCase ):
     "Test submitfilter main methods"
@@ -43,7 +43,7 @@ class TestTorqueFilterMethods ( unittest.TestCase ):
         attr ['ppn'] = "15"
         self.current.add_attr ( attr )
         self.current.checkQueue ( ['comm_mmem_week'] )
-        self.assertRaises ( illegalMemAttributes, self.current.chk_memory )
+        self.assertRaises ( illegalMemConfig, self.current.chk_memory )
 
     def test_chk_ppn ( self ):
         attr = { }

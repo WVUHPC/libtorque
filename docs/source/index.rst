@@ -12,6 +12,7 @@ Contents:
    :maxdepth: 2
 
    Overview <intro>
+   Getting Started <installation>
    How torqueFilter works <usage>
    Filtering Jobs <filter>
    Audit Jobs <audit>

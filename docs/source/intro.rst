@@ -14,6 +14,5 @@ In addition to filter rules, torqueFilter provides the capability to audit
 PBS settings and/or commands used in submitted jobs.  Audit functions allow
 easy querying of how a distributed system is being utilized by it's users.  For
 instance, you could quickly determine the number of processes requested for
-each mpirun command.  
-
-
+each mpirun command, which modulefiles are being loaded, or how PBS attributes
+are being used in combination.  

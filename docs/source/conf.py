@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# torquefilter documentation build configuration file, created by
-# sphinx-quickstart on Mon Feb 29 16:10:53 2016.
+# torqueFilter documentation build configuration file, created by
+# sphinx-quickstart on Tue Mar  1 15:31:57 2016.
 #
 # This file is execfile()d with the current directory set to its
 # containing dir.
@@ -33,7 +33,7 @@ extensions = [
 ]
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['.templates']
+templates_path = ['_templates']
 
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
@@ -47,9 +47,9 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'torquefilter'
-copyright = u'2016, M Carlise, Nathan Gregg'
-author = u'M Carlise, Nathan Gregg'
+project = u'torqueFilter'
+copyright = u'2016, M Carlise'
+author = u'M Carlise'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -75,7 +75,7 @@ language = None
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns = ['.build']
+exclude_patterns = []
 
 # The reST default role (used for this markup: `text`) to use for all
 # documents.
@@ -138,7 +138,7 @@ html_theme = 'alabaster'
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['.static']
+html_static_path = ['_static']
 
 # Add any extra paths that contain custom files (such as robots.txt or
 # .htaccess) here, relative to this directory. These files are copied
@@ -201,7 +201,7 @@ html_static_path = ['.static']
 #html_search_scorer = 'scorer.js'
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'torquefilterdoc'
+htmlhelp_basename = 'torqueFilterdoc'
 
 # -- Options for LaTeX output ---------------------------------------------
 
@@ -223,8 +223,8 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'torquefilter.tex', u'torquefilter Documentation',
-     u'M Carlise, Nathan Gregg', 'manual'),
+    (master_doc, 'torqueFilter.tex', u'torqueFilter Documentation',
+     u'M Carlise', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -253,7 +253,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'torquefilter', u'torquefilter Documentation',
+    (master_doc, 'torquefilter', u'torqueFilter Documentation',
      [author], 1)
 ]
 
@@ -267,8 +267,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'torquefilter', u'torquefilter Documentation',
-     author, 'torquefilter', 'One line description of project.',
+    (master_doc, 'torqueFilter', u'torqueFilter Documentation',
+     author, 'torqueFilter', 'One line description of project.',
      'Miscellaneous'),
 ]
 

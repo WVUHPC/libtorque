@@ -49,8 +49,8 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'torqueFilter'
-copyright = u'2016, M Carlise'
-author = u'M Carlise'
+copyright = u'2016 WVU Research Computing'
+author = u'WVU Research Computing'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -225,7 +225,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     (master_doc, 'torqueFilter.tex', u'torqueFilter Documentation',
-     u'M Carlise', 'manual'),
+     u'WVU Research Computing', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of

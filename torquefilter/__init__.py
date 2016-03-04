@@ -7,7 +7,10 @@ from torquefilter.error import illegalMemReq, illegalMemConfig
 from torquefilter.qsub import qsubfile
 
 class torqueFilter ( qsubfile.qsubfile ):
-    """ User class for job submissions """
+    """
+    Creates a job filter for torque submission files.  Each submitted jobs will
+    need it's own torqueFilter class.  
+    """
 
     def __init__ ( self ):
         self.queuesToCheck          =   []
@@ -19,26 +22,34 @@ class torqueFilter ( qsubfile.qsubfile ):
         self.attr ['Interactive']   =   False
 
     def checkQueue ( self, queues ):
-        """ Add list of queues to queuesToCheck """
+        """
+        Add *queues* (list of strings) to list of torque queue classes to check
+        to ensure correct CPU/memory configuration.  torqueFilter will check if
+        the job can physically run on the queue class.
+        """
 
         for name in queues:
             self.queuesToCheck.append ( name )
 
     def illComm ( self, commands ):
-        """ Add list of commands to commandsToCheck """
+        """
+        Specify that *commands* (list of strings) cannot be run within user jobs
+        """
 
         for cmd in commands:
             self.commandsToCheck.append ( cmd );
 
     def illAttr ( self, attr ):
-        """ Add illegal attributes to attrToCheck """
+        """
+        Specify that *attr* (list of strings) cannot be used within user jobs
+        """
 
         for name in attr:
             self.attrToCheck.append ( name )
 
 
     def rtn_filename ( self ):
-        """ Given sys.argv[1:] set filename for input """
+        """ Given sys.argv[1:] set filename for input - internal command """
 
         args = sys.argv [ 1: ]
         nargs = len ( args )
@@ -57,7 +68,7 @@ class torqueFilter ( qsubfile.qsubfile ):
             self.filename = "STDIN"
 
     def chk_memory ( self ):
-        """Check PBS resources for correct memory amount"""
+        """Check PBS resources for correct memory amounti - internal command"""
 
         # Return if community node not specified
         if 'queue' in self.attr:
@@ -126,7 +137,11 @@ class torqueFilter ( qsubfile.qsubfile ):
 
 
     def runfilter ( self ):
-        """ Run configured job submission filter """
+        """ 
+        Run configured job submission filter.  After queue classes, illegal
+        command and attribute rules have been specified, runfilter method will 
+        ensure submitted jobs do not violate any set rules.
+        """
 
         # Read CLI options for filename
         try:

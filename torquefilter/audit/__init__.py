@@ -68,7 +68,13 @@ class jobauditer:
         self.jsonData [tableName].append ( valueList )
 
     def init ( self, nameProvided = None ):
-        """ Set instance fileName for output """
+        """ 
+        Set output filename/path depending on *nameProvided*.  If *None* audit
+        class output would be set according python module tempfile.  If a
+        directory is given, a tmpfile will be created and placed in that
+        directory.  If a full filename is given, output is directed to given
+        filename. 
+        """
 
         if ( nameProvided ):
             if ( os.path.exists ( nameProvided ) ):
@@ -87,7 +93,18 @@ class jobauditer:
 
 
     def command ( self, cmdName, args = None ):
-        """ Check presence of given command """
+        """ 
+        Check presence of *cmdName*.  If *args* (list of strings) are supplied,
+        then given arguments must be present within command name in order to be
+        recorded as a presence.  This method will only count the number of
+        submitted jobs that have *cmdName* present.  If you want to capture
+        specific details of command-line arguments use *commandArgs* or
+        *commandSlice* method instead.
+
+        For instance, if *cmdName* = 'mpirun' and *args* = ['-np'], the full
+        command 'mpirun -host localhost sample.exe' will not be counted since
+        the '-np' argument is not present.
+        """
 
         for cmd in self.commands:
             if cmdName in cmd [0]:
@@ -101,7 +118,17 @@ class jobauditer:
 
 
     def commandArgs ( self, cmdName, args, tableName = False ):
-        """ Capture cmdName argument values or presence """
+        """ 
+        Capture the values of *args* (list of strings) when the *cmdName* 
+        (string)  command is used in a job submission.  The output of this
+        command will be placed in a entry *tableName*.
+
+        For instance, if *cmdName* = 'mpirun' and *args* = ['-np'], the full
+        command 'mpirun -np 15 -host localhost sample.exe' will record the
+        argument value: '-np : 15'.  Multiple arguments can be supplied.  If
+        given arguments are not all present, arguments that are present will be
+        recorded.
+        """
 
         for cmd in self.commands:
             if cmdName in cmd [0]:
@@ -117,7 +144,22 @@ class jobauditer:
 
 
     def commandSlice ( self, cmdName, args = None , start = 1, end = None , tableName = False ):
-        """ Capture a slice of the command matching cmdName and args """
+        """ 
+        Capture a slice of a command when *cmdName* (string ) is used in a job
+        submission.  What commands are audited is controlled by *cmdName* and
+        *args* (list of strings).  Similiar to other command methods within the
+        audit class.  If all the specified *args* are not present, the command
+        slice is not captured.  The output of this command will be placed in a
+        entry *tableName*.  The *start* and *end* parameters control what values
+        are captured along the command line.
+
+        For instance, if *cmdName* = 'mpirun', *args* = ['-np'], and *start* =
+        2, and the full command 'mpirun -np 12 -host localhost sample.exe
+        -output output.txt' The values '12', '-host', 'localhost', 'sample.exe',
+        '-output' and 'output.txt' will all be recorded.  This is useful
+        whenever you have a command that acts on a variable number of arguments,
+        and you want to capture the range of arguments given.
+        """
 
         for cmd in self.commands:
             if cmdName in cmd [0]:
@@ -142,13 +184,19 @@ class jobauditer:
 
     
     def attr ( self, attrName, tableName = False ):
-        """ Capture attributes value """
+        """ 
+        Capture *attrName* value in an entry *tableName*. 
+        """
 
         if ( attrName in self.attributes ):
             self.jsonData [attrName] = self.attributes [attrName]
 
     def runaudit ( self ):
-        """ Commit jsonData to a json file """
+        """ 
+        Write JSON output to outpufile.  This method should be run after all
+        audit rules are setup.  This prevents numerous writes and data races
+        among multiple file streams.
+        """
 
         outputfile = open ( self.fileName, mode='w' )
         json.dump ( self.decodePython.encode ( self.jsonData ), outputfile )

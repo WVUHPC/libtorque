@@ -1,23 +1,15 @@
 
-Audit Class
-============
+torquefilter.audit
+==================
 
-The jobauditer class provides the ability to record information about submitted
-jobs.  You can record the values of PBS attributes. Or record the percentage of
-jobs that use a specific command.  Additionally, you can record specific values
-of certain arguments for commands.  For instance::
+Audit commands and PBS attributes of submitted jobs
 
-    from torquefilter import audit
+.. py:module:: torquefilter.audit
+.. autoclass:: jobauditer
 
-    tellme = audit.jobauditer(current_job)
-    tellme.init()
-
-    tellme.commandArgs('mpirun', ['-np'])
-
-    tellme.runaudit()
-
-will capture the value of the '-np' argument of all mpirun commands; allowing
-you to capture the size range of parallel jobs.
-
-
-
+    .. automethod:: init
+    .. automethod:: command
+    .. automethod:: commandArgs
+    .. automethod:: commandSlice
+    .. automethod:: attr
+    .. automethod:: runaudit

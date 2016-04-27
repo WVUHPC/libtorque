@@ -10,6 +10,13 @@ import tempfile, json
 class TestMain ( unittest.TestCase ):
     "Test submitfilter exit status"
 
+    def _runCommand(self):
+
+        filterRun = subprocess.Popen(self.comm, stdout=subprocess.PIPE, 
+                stderr=subprocess.PIPE)
+        filterRun.wait()
+        return filterRun.returncode
+
     def setUp ( self ):
         self.path = os.path.dirname ( os.path.realpath ( __file__ ) )
         command = self.path + "/scripts/audit.py"
@@ -26,7 +33,7 @@ class TestMain ( unittest.TestCase ):
         """ Audit working.pbs """
         self.comm.append ( self.path + "/pbsfiles/working.pbs" )
         self.comm.append ( self.tmpfile )
-        exit_code = subprocess.call ( self.comm )
+        exit_code = self._runCommand()
         self.assertEqual ( exit_code, 0 )
 
         # Check tmpfile for correct JSON structures
@@ -45,7 +52,7 @@ class TestMain ( unittest.TestCase ):
         """ Audit moduleload.pbs """
         self.comm.append ( self.path + "/pbsfiles/moduleload.pbs" )
         self.comm.append ( self.tmpfile )
-        exit_code = subprocess.call ( self.comm )
+        exit_code = self._runCommand()
         self.assertEqual ( exit_code, 0 )
 
         # Pull Json structure

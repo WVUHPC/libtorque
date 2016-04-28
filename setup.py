@@ -6,7 +6,7 @@ setup(
     version = '1.2.1',
 
     description = 'Class for creating efficient qsub torque submitfilters',
-    author = 'Nathan Gregg, M Carlise'
+    author = 'Nathan Gregg, M Carlise',
     author_email = 'negregg@mail.wvu.edu, mcarlise@mail.wvu.edu',
     license = 'GPLv3+',
 

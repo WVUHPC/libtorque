@@ -2,3 +2,7 @@
 */*.pyc
 */__pycache__
 docs/.build/**
+.coverage
+coverage.xml
+nose2.xml
+pylint.out

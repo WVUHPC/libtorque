@@ -10,23 +10,22 @@ import unittest
 
 from torquefilter.qsub.qsubfile import qsubfile
 
-class TestQsubfileMethods (unittest.TestCase):
-    "Test Qsubfile class methods"
+class test_qsub_parser(unittest.TestCase):
 
     def setUp (self):
-        self.current = qsubfile ()
+        self.current = qsubfile()
 
-    def test_strip_command (self):
+    def test_strip_command(self):
         command = "<file1 qsub -N file >>output.txt"
         self.assertEqual (self.current.parse_comm (command), ['qsub -N file']) 
 
-    def test_parseOpts (self):
+    def test_parseOpts(self):
         args = "-l nodes=1:ppn=3,pvmem=5GB -q standby -l ppn=5".split ()
         self.current.parseOpts (args)
         self.assertEqual (self.current.attr ['ppn'], "5")
         self.assertEqual (self.current.attr ['queue'], "standby")
 
-    def test_walltime_parseOpts ( self ):
+    def test_walltime_parseOpts(self):
         args = "-l nodes=4:ppn=4,pvmem=17gb,walltime=04:00:00".split ()
         self.current.parseOpts ( args )
         self.assertEqual ( self.current.attr ['walltime'], "04:00:00" )

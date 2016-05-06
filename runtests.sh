@@ -1,6 +1,8 @@
 #!/bin/sh
 
-# Create python virtualenv to run tests
+# Create python virtualenv
+# Install necessary python modules
+# Run all specified tests
 
 # Check if .pyenv is made
 # Outside Jenkins, workspace evaluates to nothing
@@ -17,7 +19,9 @@ virtualenv --no-site-packages .pyenv
 pip install --quiet nose2
 pip install --quiet pylint
 pip install --quiet cov-core
+pip install --quiet ${PWD}
 
-# Run test
+
+nose2 -v -A qsub
 pylint --msg-template="{path}:{line}: [{msg_id}({symbol}), {obj}] {msg}" \
 		torquefilter > pylint.out || exit 0

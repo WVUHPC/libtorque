@@ -9,47 +9,24 @@ import subprocess
 
 import unittest
 
-from torquefilter.qsub.qsubfile import qsubfile
+from torquefilter.qsub.qsubfile import parse_qsub
 
 class test_qsub_parser(unittest.TestCase):
 
     def setUp (self):
-        self.current = qsubfile()
+        self.current = parse_qsub()
 
-    def test_strip_command(self):
-        command = "<file1 qsub -N file >>output.txt"
-        self.assertEqual (self.current.parse_comm (command), ['qsub -N file']) 
+    def test_parse_options(self):
+        "Check that parse_qsub parses options"
 
-    def test_parseOpts(self):
         args = "-l nodes=1:ppn=3,pvmem=5GB -q standby -l ppn=5".split ()
-        self.current.parseOpts (args)
-        self.assertEqual (self.current.attr ['ppn'], "5")
-        self.assertEqual (self.current.attr ['queue'], "standby")
+        attributes = vars(self.current.parse_args(args))
 
-    def test_walltime_parseOpts(self):
-        args = "-l nodes=4:ppn=4,pvmem=17gb,walltime=04:00:00".split ()
-        self.current.parseOpts ( args )
-        self.assertEqual ( self.current.attr ['walltime'], "04:00:00" )
+        self.assertEqual(attributes['ppn'], 5)
+        self.assertEqual(attributes['queue'], "standby")
+    test_parse_options.parse_qsub = True
+    test_parse_options.unit = True
 
-    def test_commline (self):
-        args = "-l nodes=1:ppn=3,pvmem=5GB -q standby -l ppn=5".split ()
-        self.current.commline (args)
-        self.assertEqual (self.current.attr ['ppn'], "5")
-        self.assertEqual (self.current.attr ['queue'], "standby")
-
-    def test_CLI_over_parseOpts (self):
-        cli_args = "-l nodes=1:ppn=3,pvmem=5GB -q standby".split ()
-        args = "-l nodes=2:ppn=5 -q comm_mmem_week".split ()
-        self.current.parseOpts (args)
-        self.current.commline (cli_args)
-        self.assertEqual (self.current.attr ['ppn'], "3")
-        self.assertEqual (self.current.attr ['queue'], "standby")
-
-    def test_parseOpts_return (self):
-        args = "-l nodes=1:ppn=3 filename".split ()
-        leftover = self.current.parseOpts (args)
-        self.assertEqual (len (leftover), 1)
-        self.assertEqual (leftover [0], 'filename')
 
 if __name__ == '__main__':
     unittest.main()

@@ -67,8 +67,8 @@ class scanner:
             else:
                 if (parse_directives):
                     parse_directives = False
-                for each in self.parse_command(line):
-                    self.mapper.add_command(each)
+                for cmd in self.parse_command(line):
+                    self.mapper.add_command(cmd)
 
         # Parse Options in correct order
         attributes = vars(self.parser.parse_args(args))

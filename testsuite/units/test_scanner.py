@@ -35,12 +35,12 @@ class test_process_file(unittest.TestCase):
         "Check complex command structures"
 
         command = "<file1 qsub -N file >>output.txt"
-        self.current.parse_command(command)
-        self.assertEqual(self.map.commands, ['qsub -N file'])
+        rt_cmd = self.current.parse_command(command)
+        self.assertEqual(rt_cmd, ['qsub -N file'])
 
         command = "<file1 cat | cmp - file2"
-        self.current.parse_command(command)
-        self.assertEqual(self.map.commands, ['cat', 'cmp - file2'])
+        rt_cmd = self.current.parse_command(command)
+        self.assertEqual(rt_cmd, ['cat', 'cmp - file2'])
     test_strip_command.unit = True
     test_strip_command.scanner = True
 

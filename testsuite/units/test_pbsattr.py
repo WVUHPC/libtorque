@@ -7,7 +7,7 @@ import os.path
 import sys
 import unittest
 
-from torquefilter.qsub.pbsattr import PBSattr
+from torquefilter.mapper.pbsattr import PBSattr
 
 class Test_PBS_map(unittest.TestCase):
 
@@ -22,7 +22,7 @@ class Test_PBS_map(unittest.TestCase):
         self.current.add_attribute(map_attr)
         self.assertEqual(self.current.attr['queue'], "standby")
     test_map_attribute.unit = True
-    test_map_attribute.pbsmap = True
+    test_map_attribute.pbsmap = 1
 
     def test_no_overwrite_attribute(self):
         "Check that duplicates do not overwrite initial attribute by default"
@@ -35,7 +35,7 @@ class Test_PBS_map(unittest.TestCase):
         self.current.add_attribute(second_attr)
         self.assertEqual(self.current.attr['queue'], "standby")
     test_no_overwrite_attribute.unit = True
-    test_no_overwrite_attribute.pbsmap = True
+    test_no_overwrite_attribute.pbsmap = 1
 
     def test_overwrite_attribute(self):
         "Check that duplicates overwrite initial attribute if configured"
@@ -48,7 +48,7 @@ class Test_PBS_map(unittest.TestCase):
         self.current.add_attribute(second_attr, overWrite=True)
         self.assertEqual(self.current.attr['queue'], "comm_mmem_week")
     test_overwrite_attribute.unit = True
-    test_overwrite_attribute.pbsmap = True
+    test_overwrite_attribute.pbsmap = 1
 
     def test_map_multiple_attribute(self):
         "Check that multiple attributes can be mapped at the same time"
@@ -62,7 +62,7 @@ class Test_PBS_map(unittest.TestCase):
         self.assertEqual(self.current.attr['pvmem'], "5GB")
         self.assertEqual(self.current.attr['nodes'], "1")
     test_map_multiple_attribute.unit = True
-    test_map_multiple_attribute.pbsmap = True
+    test_map_multiple_attribute.pbsmap = 1
 
     def test_map_command(self):
         "Check that commands can be mapped"
@@ -70,7 +70,7 @@ class Test_PBS_map(unittest.TestCase):
         self.current.add_command("ssh srih0001")
         self.assertEqual(['ssh', 'srih0001'], self.current.comm[0])
     test_map_command.unit = True
-    test_map_command.pbsmap = True
+    test_map_command.pbsmap = 1
 
     def test_command_index(self):
         "Check that we can reference specific indexes of mapped commands"
@@ -80,7 +80,7 @@ class Test_PBS_map(unittest.TestCase):
         self.assertEqual(self.current.comm[1], ['qsub', '-N', 'file'])
         self.assertEqual(self.current.comm[1][0], 'qsub')
     test_command_index.unit = True
-    test_command_index.pbsmap = True
+    test_command_index.pbsmap = 1
         
 
 if __name__ == '__main__':

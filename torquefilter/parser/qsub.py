@@ -1,8 +1,7 @@
 
 import sys, re, getopt
-from torquefilter.qsub.pbsattr import PBSattr
 
-class qsubfile (PBSattr):
+class parse_qsub:
     "Class for PBS directives during job submission files"
 
     def parse_comm (self, line):

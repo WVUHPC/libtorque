@@ -9,7 +9,7 @@ import subprocess
 
 import unittest
 
-from torquefilter.qsub.qsubfile import parse_qsub
+from torquefilter.parser.qsub import parse_qsub
 
 class test_qsub_parser(unittest.TestCase):
 

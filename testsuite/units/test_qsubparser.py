@@ -9,21 +9,21 @@ import subprocess
 
 import unittest
 
-from torquefilter.parser.qsub import parse_qsub
+from torquefilter.parser.qsub import qsub
 
 class test_qsub_parser(unittest.TestCase):
 
     def setUp (self):
-        self.current = parse_qsub()
+        self.current = qsub()
 
     def test_parse_options(self):
         "Check that parse_qsub parses options"
 
-        args = "-l nodes=1:ppn=3,pvmem=5GB -q standby -l ppn=5".split ()
+        args = "-l nodes=1:ppn=3,pvmem=5GB -q standby".split ()
         attributes = vars(self.current.parse_args(args))
 
-        self.assertEqual(attributes['ppn'], 5)
-        self.assertEqual(attributes['queue'], "standby")
+        self.assertEqual(attributes['resource_list'], 'nodes=1:ppn=3,pvmem=5GB')
+        self.assertEqual(attributes['destination'], "standby")
     test_parse_options.parse_qsub = True
     test_parse_options.unit = True
 

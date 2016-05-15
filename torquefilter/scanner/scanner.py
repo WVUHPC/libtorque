@@ -37,9 +37,9 @@ class scanner:
 
 
         if ('STDIN' == fn):
-            input = sys.stdin
+            infd = sys.stdin
         else:
-            input = open(fn, 'r')
+            infd = open(fn, 'r')
 
         args = []
         parse_directives = True
@@ -50,7 +50,7 @@ class scanner:
         else:
             output = sys.stdout
 
-        for line in input:
+        for line in infd:
             # Make sure submit script echoed to STDOUT for qsub command
             if (printfile):
                 output.write(line)
@@ -63,19 +63,23 @@ class scanner:
                 if (line.startswith('#PBS ')):
                     if (parse_directives):
                         for directive in line.lstrip('#PBS ').split( ' ' ):
-                            args.append(directive)
+                            # join strings, not append; nested lists will fail 
+                            # argparse()
+                            args += directive
             else:
                 if (parse_directives):
+                    # future directives will not be parsed
                     parse_directives = False
                 for cmd in self.parse_command(line):
                     self.mapper.add_command(cmd)
 
-        # Parse Options in correct order
-        attributes = vars(self.parser.parse_args(args))
-        self.mapper.add_attribute(attributes)
+        # Parse Options only if there are arguments
+        if (args):
+            attributes = vars(self.parser.parse_args(args))
+            self.mapper.add_attribute(attributes)
         
 
         if (outfile):
             output.close()
-        input.close()
+        infd.close()
                

@@ -22,8 +22,9 @@ class test_qsub_parser(unittest.TestCase):
         args = "-l nodes=1:ppn=3,pvmem=5GB -q standby".split ()
         attributes = vars(self.current.parse_args(args))
 
-        self.assertEqual(attributes['resource_list'], 'nodes=1:ppn=3,pvmem=5GB')
-        self.assertEqual(attributes['destination'], "standby")
+        self.assertEqual(attributes['resource_list'], 
+                ['nodes=1:ppn=3,pvmem=5GB'])
+        self.assertEqual(attributes['destination'], ['standby'])
     test_parse_options.parse_qsub = True
     test_parse_options.unit = True
 

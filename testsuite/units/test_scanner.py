@@ -12,14 +12,17 @@ from torquefilter.scanner.scanner import scanner
 
 
 class dummy_map:
-    attribute = {}
-    commands = []
+    
+    def __init__(self):
+        self.attribute = {}
+        self.commands = []
 
     def add_command(self, command):
-        self.commands.append[command]
+        self.commands.append(command)
 
     def add_attribute(self, directive):
-        self.attribute[directive[0]] = directive[1]
+        for key in directive.keys():
+            self.attribute[key] = directive[key]
 
 
 class test_process_file(unittest.TestCase):
@@ -88,7 +91,7 @@ class test_process_file(unittest.TestCase):
         tmpfile.close()
 
         self.current.runparser(filename, printfile=False)
-        self.assertEqual(self.map.attribute['queue'], "standby")
+        self.assertEqual(self.map.attribute['queue'], ['standby'])
         self.assertTrue("module" in self.map.commands[0:][0])
         os.unlink(filename)
     test_processfile.unit = True

@@ -25,7 +25,7 @@ class dummy_map:
             self.attribute[key] = directive[key]
 
 
-class test_process_file(unittest.TestCase):
+class test_scanner(unittest.TestCase):
 
     def setUp(self):
         self.map = dummy_map()
@@ -81,7 +81,7 @@ class test_process_file(unittest.TestCase):
         "Check runparser takes files as input"
 
         qsubfile = "#!/bin/sh\n#PBS -q standby\n" \
-                + " module load mpi/openmpi/1.6.5\n" +  \
+                + "module load mpi/openmpi/1.6.5\n" +  \
             "echo Hello"
 
         # Create sample submission script
@@ -100,7 +100,7 @@ class test_process_file(unittest.TestCase):
     def test_identical_output(self):
         "Check runparser produces identical output"
 
-        qsubfile = "#!/bin/sh\n#PBS -l nodes=1:ppn=3,pvmem=5GB\n" +  \
+        qsubfile = "#!/bin/sh\n" +  \
             "#PBS -q standby\nmodule load mpi/openmpi/1.6.5\n" +  \
             "echo Hello"
 

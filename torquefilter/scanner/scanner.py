@@ -65,7 +65,7 @@ class scanner:
                         for directive in line.lstrip('#PBS ').split( ' ' ):
                             # join strings, not append; nested lists will fail 
                             # argparse()
-                            args += directive
+                            args.append(directive)
             else:
                 if (parse_directives):
                     # future directives will not be parsed

@@ -11,16 +11,11 @@ from torquefilter.qsub import qsubfile
 
 class torqueFilter(qsubfile.qsubfile):
     """
-    Runs the torqueFilter class.  Given a configuration of queues, attributes 
-    and commands, class ensures that the current PBS job is valid  
-    
-    *queues*        -   A list of queues and their associated configuration.
-    *attributes*    -   A list of PBS attributes to reject.
-    *commands*      -   A list of commands to reject jobs.
-    
+    Creates a job filter for torque submission files.  Each submitted jobs will
+    need it's own torqueFilter class.  
     """
 
-    def __init__(self, queues, attributes, commands):
+    def __init__(self):
         self.queuesToCheck          =   []
         self.commandsToCheck        =   []
         self.attrToCheck            =   []

@@ -4,11 +4,6 @@ class Error ( Exception ):
     """ Base class for exceptions in libtorque module. """
     pass
 
-class illegalMemReq ( Error ):
-    """ 
-    Raised for illegal memory attributes within PBS. 
-    """
-
 class illegalMemConfig ( Error ):
     """ 
     Raised for illegal memory request.  Specifically, if too much memory was

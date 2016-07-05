@@ -44,8 +44,6 @@ class test_scanner(unittest.TestCase):
         command = "<file1 cat | cmp - file2"
         rt_cmd = self.current.parse_command(command)
         self.assertEqual(rt_cmd, ['cat', 'cmp - file2'])
-    test_strip_command.unit = True
-    test_strip_command.scanner = True
 
     def test_identify_commands(self):
         "Check runparser identifies commands"
@@ -59,8 +57,6 @@ class test_scanner(unittest.TestCase):
 
         self.current.runparser(filename, printfile=False)
         self.assertEqual(self.map.commands,['qsub -N stuff'])
-    test_identify_commands.unit = True
-    test_identify_commands.scanner = True
 
     def test_identify_directive(self):
         "Check runparser identifies directives"
@@ -74,8 +70,6 @@ class test_scanner(unittest.TestCase):
 
         self.current.runparser(filename, printfile=False)
         self.assertEqual(self.map.attribute['name'],['stuff'])
-    test_identify_directive.unit = True
-    test_identify_directive.scanner = True
 
     def test_processfile(self):
         "Check runparser takes files as input"
@@ -94,8 +88,6 @@ class test_scanner(unittest.TestCase):
         self.assertEqual(self.map.attribute['queue'], ['standby'])
         self.assertTrue("module" in self.map.commands[0:][0])
         os.unlink(filename)
-    test_processfile.unit = True
-    test_processfile.scanner = True
         
     def test_identical_output(self):
         "Check runparser produces identical output"
@@ -121,8 +113,6 @@ class test_scanner(unittest.TestCase):
       
         os.unlink(filename)
         os.unlink(tmpoutfile)
-    test_identical_output.unit = True
-    test_identical_output.scanner = True
 
 if __name__ == '__main__':
     unittest.main()

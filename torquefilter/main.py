@@ -3,13 +3,8 @@ import sys
 import tempfile
 import os
 import stat
-import getopt
 
-from torquefilter.error import illegalConfig, illegalCommand
-from torquefilter.error import illegalMemReq, illegalMemConfig
-from torquefilter.qsub import qsubfile
-
-class torqueFilter(qsubfile.qsubfile):
+class torqueFilter():
     """
     Runs the torqueFilter class.  Given a configuration of queues, attributes 
     and commands, class ensures that the current PBS job is valid  
@@ -20,41 +15,25 @@ class torqueFilter(qsubfile.qsubfile):
     
     """
 
-    def __init__(self, queues, attributes, commands):
-        self.queuesToCheck          =   []
-        self.commandsToCheck        =   []
-        self.attrToCheck            =   []
-        self.maxMem                 =   54
-        self.attr                   =   {}
-        self.comm                   =   []
-        self.attr['Interactive']    =   False
+    filename            =   None
+    queuesToCheck       =   None
+    commandsToCheck     =   None
+    attrToCheck         =   None
 
-    def checkQueue(self, queues):
-        """
-        Add *queues* (list of strings) to list of torque queue classes to check
-        to ensure correct CPU/memory configuration.  torqueFilter will check if
-        the job can physically run on the queue class.
-        """
+    def __init__(self, queues=None, attributes=None, commands=None, mapper=None, 
+            parser=None, scanner=None):
+        self.queuesToCheck          =   queues
+        self.commandsToCheck        =   commands
+        self.attrToCheck            =   attributes
+        self.map                    =   mapper()
+        self.parser                 =   parser()
+        self.scanner                =   scanner(self.map, self.parser)
 
-        for name in queues:
-            self.queuesToCheck.append(name)
+    def commline(self, args):
+        """ Run parser over args, send results to mapper """
 
-    def illComm(self, commands):
-        """
-        Specify that *commands* (list of strings) cannot be run within user jobs
-        """
-
-        for cmd in commands:
-            self.commandsToCheck.append(cmd);
-
-    def illAttr(self, attr):
-        """
-        Specify that *attr* (list of strings) cannot be used within user jobs
-        """
-
-        for name in attr:
-            self.attrToCheck.append(name)
-
+        attributes = vars(self.parser.parse_args(args))
+        self.map.add_attribute(attributes)
 
     def rtn_filename(self):
         """ Given sys.argv[1:] set filename for input - internal command """

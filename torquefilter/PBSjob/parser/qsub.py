@@ -1,11 +1,14 @@
 
 import argparse
 
+class ModifiedArgumentParser(argparse.ArgumentParser):
+	def error(self, message):
+		raise ArgumentParserError(message)
+
 def qsub():
     """Initialize a parser for qsub style PBS directives"""
 
-
-    parser = argparse.ArgumentParser()
+    parser = ModifiedArgumentParser()
 
     # Add arguments
     parser.add_argument('-a', dest='date_time', nargs=1, type=int)
@@ -39,5 +42,24 @@ def qsub():
     parser.add_argument('-x', dest='non_parse', action='store_true')
     parser.add_argument('-X', dest='Xforwarding', action='store_true')
     parser.add_argument('-z', dest='no_jobidentifier', action='store_true')
+    parser.add_argument('remain', nargs=argparse.REMAINDER)
 
     return parser
+
+def parseUsage(self):
+    """ Print qsub usage message if argparse Error occurs """
+
+    sys.stderr.write ( "usage: qsub [-a data_time] [-A account_string] [-" )
+    sys.stderr.write ( "b secs]\n\t[-c [ none | { enabled | periodic | " )
+    sys.stderr.write ( "shutdown |\n\tdepth=<int> | dir=<path> | interva " )
+    sys.stderr.write ( "l=<minutes>}... ]\n\t[-C directive_prefix] -d pa" )
+    sys.stderr.write ( "th] [-D path]\n\t[-e path] [-h] [-I] [-j oe|eo|n]" )
+    sys.stderr.write ( " [-k {oe}] [-l resource_list] [-m n|{abe}]\n\t" )
+    sys.stderr.write ( "[-M user_list] [-N jobname] [-o path] [-p " )
+    sys.stderr.write ( "priority] [-P proxy_user [-J <jobid]]\n\t" )
+    sys.stderr.write ( "[-q queue] [-r y|n] [-S path] [-t number_to_" )
+    sys.stderr.write ( "submit] [-T type] [-u user_list] [-w] path\n\t" )
+    sys.stderr.write ( "[-W additional_attributes] [-v variable_list]" )
+    sys.stderr.write ( " [-V] [-x] [-X] [-z] [script]\n\n" )
+
+    return

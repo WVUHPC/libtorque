@@ -1,15 +1,12 @@
 #!/bin/env python
 
-import os.path
-import sys
+import os
 import tempfile
 import subprocess
-
 import unittest
 import argparse
 
 from torquefilter.scanner.scanner import scanner
-
 
 class dummy_map:
     

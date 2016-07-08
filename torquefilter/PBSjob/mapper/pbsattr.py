@@ -3,8 +3,8 @@ class PBSattr:
     "Dictionary structure for job commands/attirbutes"
 
     def __init__(self):
-        self.attr       =   {}
-        self.comm       =   []
+        self.attributes         =   {}
+        self.commands           =   []
 
     def __chk_duplicate(self, attr):
         """Check if attr is already defined
@@ -12,7 +12,7 @@ class PBSattr:
         Used to avoid overwrite of attributes if not desired
         """
 
-        if (attr in self.attr):
+        if (attr in self.attributes):
             return False
         else:
             return True
@@ -23,12 +23,12 @@ class PBSattr:
         for key in iter(attr_map):
             if (not overWrite):
                 if (self.__chk_duplicate(key)):
-                    self.attr[key] = attr_map[key]
+                    self.attributes[key] = attr_map[key]
             else:
-                self.attr[key] = attr_map[key]
+                self.attributes[key] = attr_map[key]
 
 
     def add_command(self, command):
         "Add commands to command list"
 
-        self.comm.append(command.split())
+        self.commands.append(command.split())

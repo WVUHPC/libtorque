@@ -3,11 +3,9 @@
 # Test PBSattr Class
 
 
-import os.path
-import sys
 import unittest
 
-from torquefilter.mapper.pbsattr import PBSattr
+from torquefilter.PBSjob.mapper.pbsattr import PBSattr
 
 class Test_PBS_map(unittest.TestCase):
 
@@ -20,7 +18,7 @@ class Test_PBS_map(unittest.TestCase):
         map_attr = {}
         map_attr['queue'] = "standby"
         self.current.add_attribute(map_attr)
-        self.assertEqual(self.current.attr['queue'], "standby")
+        self.assertEqual(self.current.attributes['queue'], "standby")
 
     def test_no_overwrite_attribute(self):
         "Check that duplicates do not overwrite initial attribute by default"
@@ -31,7 +29,7 @@ class Test_PBS_map(unittest.TestCase):
         second_attr['queue'] = "comm_mmem_week"
         self.current.add_attribute(map_attr)
         self.current.add_attribute(second_attr)
-        self.assertEqual(self.current.attr['queue'], "standby")
+        self.assertEqual(self.current.attributes['queue'], "standby")
 
     def test_overwrite_attribute(self):
         "Check that duplicates overwrite initial attribute if configured"
@@ -42,7 +40,7 @@ class Test_PBS_map(unittest.TestCase):
         second_attr['queue'] = "comm_mmem_week"
         self.current.add_attribute(map_attr)
         self.current.add_attribute(second_attr, overWrite=True)
-        self.assertEqual(self.current.attr['queue'], "comm_mmem_week")
+        self.assertEqual(self.current.attributes['queue'], "comm_mmem_week")
 
     def test_map_multiple_attribute(self):
         "Check that multiple attributes can be mapped at the same time"
@@ -53,8 +51,8 @@ class Test_PBS_map(unittest.TestCase):
         map_attr['pvmem'] = "5GB"
         map_attr['ppn'] = "1"
         self.current.add_attribute(map_attr)
-        self.assertEqual(self.current.attr['pvmem'], "5GB")
-        self.assertEqual(self.current.attr['nodes'], "1")
+        self.assertEqual(self.current.attributes['pvmem'], "5GB")
+        self.assertEqual(self.current.attributes['nodes'], "1")
 
     def test_map_command(self):
         "Check that commands can be mapped"
@@ -67,8 +65,8 @@ class Test_PBS_map(unittest.TestCase):
 
         self.current.add_command("ssh srih0001")
         self.current.add_command("qsub -N file")
-        self.assertEqual(self.current.comm[1], ['qsub', '-N', 'file'])
-        self.assertEqual(self.current.comm[1][0], 'qsub')
+        self.assertEqual(self.current.commands[1], ['qsub', '-N', 'file'])
+        self.assertEqual(self.current.commands[1][0], 'qsub')
         
 
 if __name__ == '__main__':

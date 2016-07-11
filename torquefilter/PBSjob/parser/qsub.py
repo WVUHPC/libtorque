@@ -1,4 +1,6 @@
 
+from torquefilter.exceptions.parser import ArgumentParserError
+
 import argparse
 
 class ModifiedArgumentParser(argparse.ArgumentParser):
@@ -8,7 +10,7 @@ class ModifiedArgumentParser(argparse.ArgumentParser):
 def qsub():
     """Initialize a parser for qsub style PBS directives"""
 
-    parser = ModifiedArgumentParser()
+    parser = ModifiedArgumentParser('qsubParser', add_help=False)
 
     # Add arguments
     parser.add_argument('-a', dest='date_time', nargs=1, type=int)
@@ -20,11 +22,11 @@ def qsub():
     parser.add_argument('-D', dest='root_directory', nargs=1)
     parser.add_argument('-e', dest='error_path', nargs=1)
     parser.add_argument('-f', dest='fault_tolerant', action='store_true')
-    #parser.add_argument('-h', dest='user_hold', action='store_true')
+    parser.add_argument('-h', dest='user_hold', action='store_true')
     parser.add_argument('-I', dest='interactive', action='store_true')
     parser.add_argument('-j', dest='join', nargs=1)
     parser.add_argument('-k', dest='keep', nargs=1)
-    parser.add_argument('-l', dest='resource_list', nargs=1)
+    parser.add_argument('-l', dest='resource_list', nargs=1, action='append')
     parser.add_argument('-m', dest='mail_options', nargs=1)
     parser.add_argument('-M', dest='user_list', nargs=1)
     parser.add_argument('-N', dest='name', nargs=1)

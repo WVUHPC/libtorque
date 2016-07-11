@@ -58,7 +58,7 @@ class Test_PBS_map(unittest.TestCase):
         "Check that commands can be mapped"
 
         self.current.add_command("ssh srih0001")
-        self.assertEqual(['ssh', 'srih0001'], self.current.comm[0])
+        self.assertEqual(['ssh', 'srih0001'], self.current.commands[0])
 
     def test_command_index(self):
         "Check that we can reference specific indexes of mapped commands"
@@ -67,6 +67,17 @@ class Test_PBS_map(unittest.TestCase):
         self.current.add_command("qsub -N file")
         self.assertEqual(self.current.commands[1], ['qsub', '-N', 'file'])
         self.assertEqual(self.current.commands[1][0], 'qsub')
+
+    def test_map_resource_list(self):
+        "Check that resource_list attributes are mapped correctly"
+
+        map_attr = {}
+        map_attr['resource_list'] = [['nodes=1:ppn=3'],['pvmem=5gb']]
+        self.current.add_attribute(map_attr)
+
+        self.assertEqual(self.current.attributes['pvmem'], '5gb')
+        self.assertEqual(self.current.attributes['nodes'], '1')
+        self.assertEqual(self.current.attributes['ppn'], '3')
         
 
 if __name__ == '__main__':

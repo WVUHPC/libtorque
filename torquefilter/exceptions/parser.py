@@ -1,4 +1,4 @@
 
-from filter.py import Error
+from error import Error
 
 class ArgumentParserError(Error): pass

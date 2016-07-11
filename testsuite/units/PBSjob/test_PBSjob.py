@@ -11,12 +11,12 @@ class test_qsub_parser(unittest.TestCase):
     def test_class_instance(self):
         "Check that PBSjob can be initialized"
 
-        args = "qsub -l nodes=1:ppn=3,pvmem=5GB -q standby".split ()
+        cli = "qsub -l nodes=1:ppn=3,pvmem=5GB -q standby".split ()
 
-        current = PBSjob(args)
+        current = PBSjob(args=cli[1:0])
 
         self.assertEqual(current.filename, 'STDIN')
-        self.assertEqual(current.attributes['destination'], ['standby'])
+        self.assertEqual(current.mapper.attributes['destination'], ['standby'])
 
 
 if __name__ == '__main__':

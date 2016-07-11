@@ -17,8 +17,6 @@ class test_qsub_parser(unittest.TestCase):
         args = "-l nodes=1:ppn=3,pvmem=5GB -q standby".split ()
         attributes = vars(self.current.parse_args(args))
 
-        self.assertEqual(attributes['resource_list'], 
-                ['nodes=1:ppn=3,pvmem=5GB'])
         self.assertEqual(attributes['destination'], ['standby'])
 
     def test_remainder(self):
@@ -31,6 +29,23 @@ class test_qsub_parser(unittest.TestCase):
         
         leftovers = attributes['remain']
         self.assertEqual(len(leftovers), 2)
+
+    def test_resouce_action(self):
+        "Check that parse_qsub appends multiple resource options"
+
+        args="-l nodes=1:ppn=3 -l pvmem=5gb -q standby".split()
+        attributes = vars(self.current.parse_args(args))
+
+        self.assertEqual(attributes['resource_list'], [['nodes=1:ppn=3'], 
+            ['pvmem=5gb']])
+
+    def test_h_option(self):
+        "Test that parse_qsub parse '-h' option correctly"
+
+        args="-h".split()
+        attributes = vars(self.current.parse_args(args))
+
+        self.assertTrue(attributes['user_hold']) 
 
 
 if __name__ == '__main__':

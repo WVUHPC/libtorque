@@ -49,8 +49,9 @@ class PBSattr:
         """Add PBS attribute and value to global attributes"""
 
         # Add direct resource list mappings
-        if 'resource_list' in attr_map:
-            self.add_attribute(self.__resources(attr_map['resource_list']))
+        if 'resource_list' in attr_map and attr_map['resource_list'] != None:
+            resources = self.__resources(attr_map['resource_list'])
+            self.add_attribute(resources)
 
         for key in iter(attr_map):
             if (not overWrite):

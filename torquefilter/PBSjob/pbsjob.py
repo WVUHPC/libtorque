@@ -38,20 +38,16 @@ class PBSjob():
     def rtn_filename(self, args):
         """ Given sys.argv[1:] return filename for input """
 
-        nargs = len(args[1:])
-        if (nargs >= 1):
-            attributes = vars(self.parser.parse_args(args[1:]))
-            self.mapper.add_attribute(attributes)
+        attributes = vars(self.parser.parse_args(args[1:]))
+        self.mapper.add_attribute(attributes)
 
-            leftovers = attributes['remain']
+        leftovers = attributes['remain']
 
-            if (len(leftovers) == 1):
-                self.filename = leftovers[0]
-            elif (len(leftovers) > 1):
-                sys.stderr.write("Index error\n\n")
-                sys.exit(1)
-            else:
-                self.filename = "STDIN"
+        if (len(leftovers) == 1):
+            self.filename = leftovers[0]
+        elif (len(leftovers) > 1):
+            sys.stderr.write("Index error\n\n")
+            sys.exit(1)
         else:
             self.filename = "STDIN"
 

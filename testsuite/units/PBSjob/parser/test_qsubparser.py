@@ -30,6 +30,15 @@ class test_qsub_parser(unittest.TestCase):
         leftovers = attributes['remain']
         self.assertEqual(len(leftovers), 2)
 
+    def test_defaultRemainder(self):
+        "Check that parse_qsub always produces a remainder"
+
+        args="-l nodes=1:ppn=3,pvmem=5GB".split()
+        attributes = vars(self.current.parse_args(args))
+
+        number = len(attributes['remain'])
+        self.assertEqual(number, 0)
+
     def test_resouce_action(self):
         "Check that parse_qsub appends multiple resource options"
 

@@ -1,4 +1,4 @@
-#!/bin/env python
+#/bin/env python
 # Test Qsubfile Class
 
 
@@ -8,9 +8,10 @@ import os
 
 from torquefilter.PBSjob.pbsjob import PBSjob
 
-class test_qsub_parser(unittest.TestCase):
+class TestPBSjob(unittest.TestCase):
+    """ Test PBSjob class """
 
-    def test_class_instance(self):
+    def test_instance(self):
         "Check that PBSjob can be initialized"
 
         args = "qsub -l nodes=1:ppn=3,pvmem=5GB -q standby -I".split ()
@@ -20,12 +21,13 @@ class test_qsub_parser(unittest.TestCase):
         self.assertEqual(current.filename, 'STDIN')
         self.assertEqual(current.mapper.attributes['destination'], ['standby'])
 
-	def test_PBS_info(self):
-		"Check that PBSjob can handle PBS files"
+
+    def test_parsefile(self):
+        "Check that PBSjob can handle PBS files"
 
         qsubfile = "#!/bin/sh\n#PBS -q standby\n" \
-                + "module load mpi/openmpi/1.6.5\n" \
-                + "echo Hello"
+            + "module load mpi/openmpi/1.6.5\n" \
+            + "echo Hello"
 
         # Create sample submission script
         tmpfile = tempfile.NamedTemporaryFile(mode='w', delete=False)
@@ -37,9 +39,19 @@ class test_qsub_parser(unittest.TestCase):
 
         current = PBSjob(args)
 
+        self.assertEqual(current.filename, filename)
         self.assertEqual(current.mapper.attributes['destination'], ['standby'])
         self.assertTrue("module" in current.mapper.commands[0:][0])
         os.unlink(filename)
+
+    def test_stdinJobs(self):
+        "Check that PBSjob can handle STDIN jobs"
+
+        qsubfile = "#!/bin/sh\n#PBS -q standby\n" \
+            + "module load mpi/openmpi/1.6.5\n" \
+            + "echo Hello"
+
+        
 
 
 

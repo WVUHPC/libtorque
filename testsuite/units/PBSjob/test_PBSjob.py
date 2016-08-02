@@ -44,16 +44,5 @@ class TestPBSjob(unittest.TestCase):
         self.assertTrue("module" in current.mapper.commands[0:][0])
         os.unlink(filename)
 
-    def test_stdinJobs(self):
-        "Check that PBSjob can handle STDIN jobs"
-
-        qsubfile = "#!/bin/sh\n#PBS -q standby\n" \
-            + "module load mpi/openmpi/1.6.5\n" \
-            + "echo Hello"
-
-        
-
-
-
 if __name__ == '__main__':
     unittest.main()

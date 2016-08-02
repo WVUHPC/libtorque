@@ -9,7 +9,11 @@ class queue:
     def __init__(self, name=None, memLimit=None):
 
         self.name       =   name
-        self.memLimit   =   memLimit
+        
+        if (memLimit):
+            self.memLimit   =   int(memLimit)
+        else:
+            self.memLimit = memLimit
 
     def addName(self, name):
         """ Add name to queue class attributes. """
@@ -19,5 +23,5 @@ class queue:
     def addMemLimit(self, memLimit):
         """ Add memory limit to queue class attributes. """
 
-        self.memLimit   =   memLimit
+        self.memLimit   =   int(memLimit)
 

@@ -1,0 +1,76 @@
+
+#!/bin/env python
+
+import unittest
+
+from torquefilter.exceptions.error import illegalMemConfig
+from torquefilter.exceptions.error import illegalCommand
+from torquefilter.exceptions.error import illegalConfig
+
+from torquefilter.filter.queue.queue import queue
+from torquefilter.filter.mainfilter import subfilter
+
+
+class sampleMap:
+    """Small sample class to hold attributes and commands."""
+
+    def __init__(self):
+        self.attributes = {}
+        self.commands   = []
+
+    def addAttribute(self, key, value):
+        self.attributes[key] = value
+
+    def addCommand(self, comm):
+        self.commands.append(comm)
+
+
+class TestFilterClass(unittest.TestCase):
+    """ Test filter class """
+
+    def test_simpleCall(self):
+        """Test that filter class is callable."""
+
+        self.current = subfilter()
+
+    def test_illMemConfig(self):
+        """Test that filter class catches illegal memory configuration."""
+
+        queueList = []
+        queueList.append(queues('medium_day', 54))
+        queueList.append(queues('medium_week', 54))
+
+        # Setup that uses 160gb of memory on a 54gb queue class
+        values = sampleMap()
+        values.addAttribute('queue', 'medium_day')
+        values.addAttribute('pvmem', '10gb')
+        values.addAttribute('ppn', 16)
+
+        self.assertRaises(illegalMemConfig, subfilter, [queueList, values])
+
+    def test_illCommand(self):
+        """Test filter class catches illegal commands."""
+
+        illegalCommands = ['ssh']
+
+        commandList = sampleMap()
+        commandList.addCommand(['ssh', 'server6'])
+
+        self.assertRaises(illegalCommand, subfilter, values=commandList, 
+                commands=illegalCommands)
+
+
+    def test_illegalConfig(self):
+        """Test filter class catches illegal qsub attributes."""
+        
+        illegalAttributes = ['mem']
+
+        sample = sampleMap()
+        sample.addAttribute('mem', '10gb')
+
+        self.assertRaises(illegalConfig, subfilter, values=sample, 
+                attributes=illegalAttributes)
+
+
+if __name__ == '__main__':
+    unittest.main()

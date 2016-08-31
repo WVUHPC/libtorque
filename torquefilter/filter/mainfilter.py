@@ -1,4 +1,8 @@
 
+from torquefilter.exceptions.error import illegalConfig
+from torquefilter.exceptions.error import illegalMemConfig
+from torquefilter.exceptions.error import illegalCommand
+
 class subfilter:
     """
     Class that checks for illegal memory, illegal commands, and/or illegal 
@@ -100,7 +104,7 @@ class subfilter:
 
     def chk_commands(self):
         
-        for cmd in self.comm:
+        for cmd in self.commands:
             if cmd[0] in self.illcomm:
                 raise illegalCommand(cmd[0])
 

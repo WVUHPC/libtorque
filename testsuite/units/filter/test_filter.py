@@ -37,8 +37,8 @@ class TestFilterClass(unittest.TestCase):
         """Test that filter class catches illegal memory configuration."""
 
         queueList = []
-        queueList.append(queues('medium_day', 54))
-        queueList.append(queues('medium_week', 54))
+        queueList.append(queue('medium_day', 54))
+        queueList.append(queue('medium_week', 54))
 
         # Setup that uses 160gb of memory on a 54gb queue class
         values = sampleMap()

@@ -41,12 +41,12 @@ class TestFilterClass(unittest.TestCase):
         queueList.append(queue('medium_week', 54))
 
         # Setup that uses 160gb of memory on a 54gb queue class
-        values = sampleMap()
-        values.addAttribute('queue', 'medium_day')
-        values.addAttribute('pvmem', '10gb')
-        values.addAttribute('ppn', 16)
+        sample = sampleMap()
+        sample.addAttribute('queue', 'medium_day')
+        sample.addAttribute('pvmem', '10gb')
+        sample.addAttribute('ppn', 16)
 
-        self.assertRaises(illegalMemConfig, subfilter, [queueList, values])
+        self.assertRaises(illegalMemConfig, subfilter, queueList, sample)
 
     def test_illCommand(self):
         """Test filter class catches illegal commands."""
@@ -68,8 +68,7 @@ class TestFilterClass(unittest.TestCase):
         sample = sampleMap()
         sample.addAttribute('mem', '10gb')
 
-        self.assertRaises(illegalConfig, subfilter, values=sample, 
-                attributes=illegalAttributes)
+        self.assertRaises(illegalConfig, subfilter, values=sample, attributes=illegalAttributes)
 
 
 if __name__ == '__main__':

@@ -14,13 +14,12 @@ class subfilter:
     *attributes*    -  A list of illegal qsub attributes.
     """
 
-    def __init__(self, queueList=None, values=None, commands=None, 
-            attributes=None):
+    def __init__(self, queueList=None, values=None, commands=None, attributes=None):
 
         # If no map supplied, return
         if (values):
             self.commands       =   values.commands
-            self.attr     =   values.attributes
+            self.attr           =   values.attributes
         else:
             return
 
@@ -40,11 +39,14 @@ class subfilter:
     def chk_memory(self):
         """Check PBS resources for correct memory amount"""
 
+        maxMem = 0
+
         # Return if community node not specified
         if 'queue' in self.attr:
             for queue in self.queueList:
                 if self.attr['queue'] is queue.name:
                     checkMem = True
+                    maxMem = queue.memLimit
         else:
             return True
 
@@ -86,9 +88,9 @@ class subfilter:
         pvmem = pvmem.strip("gmkbw")
         pvmem = float(pvmem) / 1024 ** power
         totalMem = pvmem * ppn
-        availMem = self.maxMem / pvmem
+        availMem = maxMem / pvmem
 
-        if (totalMem > self.maxMem):
+        if (totalMem > maxMem):
             raise illegalMemConfig (int(totalMem), self.attr['queue'], \
                                 pvmem_orig, int(availMem ))
 
@@ -100,7 +102,7 @@ class subfilter:
         # Exit for illegal memory management attributes
         for attr in self.illattr:
             if (attr in self.attr):
-                raise illegalConfig()
+                raise illegalConfig(attr)
 
     def chk_commands(self):
         

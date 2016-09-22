@@ -1,15 +1,15 @@
 # User-defined Exceptions for libtorque python library
 
-class Error ( Exception ):
+class Error(Exception):
     """ Base class for exceptions in libtorque module. """
     pass
 
-class illegalMemConfig ( Error ):
+class illegalMemConfig(Error):
     """ 
     Raised for illegal memory request.  Specifically, if too much memory was
     requested over limit for queue class
 
-    Several internal members are assigned to certain class variables when
+    Several values are assigned to class variables when
     instance is called:
 
     *totalMem*  - The amount of total memory requested
@@ -18,20 +18,20 @@ class illegalMemConfig ( Error ):
     *availMem*  - Configured memory limit for reqeusted queue class
     """
 
-    def __init__ ( self, totalMem, queue, pvmem, availMem ): 
-        self.totalMem   =       str ( totalMem )
+    def __init__(self, totalMem, queue, pvmem, availMem ): 
+        self.totalMem   =       str(totalMem)
         self.queue      =       queue
-        self.pvmem      =       str ( pvmem )
-        self.availMem   =       str ( availMem )
+        self.pvmem      =       str(pvmem)
+        self.availMem   =       str(availMem)
         
-class illegalCommand ( Error ):
+class illegalCommand(Error):
     """ 
     Raised for illegal command rule violation. 
 
     *cmd*       - Specific command that raised exception
     """
 
-    def __init__ ( self, cmd ):
+    def __init__(self, cmd):
         self.cmd = cmd
 
 class illegalConfig ( Error ):
@@ -41,5 +41,5 @@ class illegalConfig ( Error ):
     *attr*      - Specific attribute that raised exception
     """
 
-    def __init__ ( self, attr ):
+    def __init__(self, attr):
         self.attr       =       attr

@@ -8,7 +8,7 @@ from torquefilter.exceptions.error import illegalCommand
 from torquefilter.exceptions.error import illegalConfig
 
 from torquefilter.filter.queue.queue import queue
-from torquefilter.filter.mainfilter import subfilter
+from torquefilter.filter.subfilter import subfilter
 
 
 class sampleMap:
@@ -23,6 +23,12 @@ class sampleMap:
 
     def addCommand(self, comm):
         self.commands.append(comm)
+
+    def getCommands(self):
+        return self.commands
+
+    def getAttributes(self):
+        return self.attributes
 
 
 class TestFilterClass(unittest.TestCase):
@@ -42,7 +48,7 @@ class TestFilterClass(unittest.TestCase):
 
         # Setup that uses 160gb of memory on a 54gb queue class
         sample = sampleMap()
-        sample.addAttribute('queue', 'medium_day')
+        sample.addAttribute('destination', 'medium_day')
         sample.addAttribute('pvmem', '10gb')
         sample.addAttribute('ppn', 16)
 

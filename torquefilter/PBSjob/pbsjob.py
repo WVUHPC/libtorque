@@ -1,15 +1,26 @@
 
-from mapper.pbsattr import PBSattr
-from parser.qsub import qsub
-from parser.qsub  import parseUsage
+from torquefilter.PBSjob.mapper.pbsattr import PBSattr
+from torquefilter.PBSjob.parser.qsub import qsub
+from torquefilter.PBSjob.parser.qsub  import parseUsage
 from torquefilter.scanner.scanner import scanner
 from torquefilter.exceptions.parser import ArgumentParserError
 
 import sys
 
 class PBSjob():
+    """
+    torqueFilter class representing a PBS submission job.  These jobs use the 
+    *qsub* command for job submission.  Additionally, they use the '#PBS' 
+    directive for specifying job attributes.
 
-    def __init__(self, args):
+    *PBSjob* class will parse command-line arguments and if specified, will read 
+    and parse the batch job submit script.
+
+    *args*  - Command-line arguments given to *qsub*, will default to sys.argv
+
+    """
+
+    def __init__(self, args=sys.argv):
         self.filename           =   None
         self.mapper             =   PBSattr()
         self.parser             =   qsub()
@@ -51,3 +62,12 @@ class PBSjob():
         else:
             self.filename = "STDIN"
 
+    def getCommands(self):
+        """ Return commands list structure """
+
+        return self.mapper.commands
+
+    def getAttributes(self):
+        """ Return PBS attributes dictionary """
+
+        return self.mapper.attributes

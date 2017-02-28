@@ -2,3 +2,12 @@
 libtorque
 
 A set of scripts and classes to build torque submitfilters.  
+
+
+This is currently in production as /shared/repos/torque_filter.  In the branch 
+refactor-qsub; there is a refactored much more heavy object decomposition 
+version of this script; however it's not fully functional.  There isn't a full 
+need to finish this or upgrade this script unless you need more functionality.
+
+On the server, there is a service script (submitfilter) that can start/stop 
+this service as a qsub filter.  That documents how this gets into production.
